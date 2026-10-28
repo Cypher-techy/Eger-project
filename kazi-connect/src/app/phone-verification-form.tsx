@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, LoaderCircle, Smartphone } from "lucide-react";
 
 export default function PhoneVerificationForm({ verified }: { verified: boolean }) {
@@ -9,6 +10,7 @@ export default function PhoneVerificationForm({ verified }: { verified: boolean 
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,7 +22,20 @@ export default function PhoneVerificationForm({ verified }: { verified: boolean 
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Could not start M-Pesa payment.");
-      setMessage("STK Push sent. Enter your M-Pesa PIN, then wait for Safaricom confirmation. Only a confirmed KSh 70 payment can verify your phone and trigger the eligible KES 750 welcome bonus.");
+      setMessage("PAYMENT PENDING — check your phone and enter your M-Pesa PIN. Waiting for Safaricom to confirm the KSh 70 payment…");
+      for (let attempt = 0; attempt < 15; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        const statusResponse = await fetch("/api/verification-status", { cache: "no-store" });
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          if (status.verified) {
+            setMessage("PAYMENT CONFIRMED — your phone is verified and the eligible KES 750 welcome bonus has been credited to your withdrawable wallet.");
+            router.refresh();
+            return;
+          }
+        }
+      }
+      setMessage("Your payment is still awaiting confirmation. Keep this page open or refresh your dashboard later. No bonus is credited until Safaricom confirms payment.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not start payment. Try again.");
     } finally { setBusy(false); }
