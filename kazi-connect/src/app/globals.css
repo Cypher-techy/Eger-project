@@ -59,3 +59,18 @@ body{background:#fff;color:#242424}
 .verification-result{background:#fff8d8;color:#4e4100;border-color:#e8d68c}
 .withdrawal-panel{margin-top:18px}
 @media(max-width:640px){.container{width:min(100% - 28px,1160px)}}
+
+.withdrawal-panel{margin-top:18px}
+.withdraw-form{display:grid;gap:11px;max-width:520px}
+.withdraw-summary{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px;border:1px solid #eee5c6;background:#fffdf4;border-radius:10px}
+.withdraw-summary small,.withdraw-summary strong{display:block}
+.withdraw-summary small{font-size:10px;color:#777}
+.withdraw-summary strong{font-size:24px;font-weight:800;color:#242424;margin-top:4px}
+.withdraw-summary>span{font-size:11px;color:#666}
+.withdraw-form label{font-size:12px;font-weight:700}
+.withdraw-form input{width:100%;padding:12px 13px;border:1px solid #e6dfc5;border-radius:8px;font:inherit;background:#fff;outline:none}
+.withdraw-form input:focus{border-color:#b58b00;box-shadow:0 0 0 3px #ffd70030}
+.withdraw-submit{justify-self:start}
+.withdraw-note{display:flex;align-items:center;gap:9px;color:#6c5a19;font-size:12px;background:#fff8dc;padding:13px;border-radius:9px}
+.withdraw-disclaimer{font-size:10px;line-height:1.6;color:#777;margin:0}
+@media(max-width:560px){.withdraw-summary{align-items:flex-start;flex-direction:column}.withdraw-submit{width:100%}}
