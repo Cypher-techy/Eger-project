@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { phone } = req.body;
+    const { phone, fullName } = req.body;
 
-    // Get credentials from environment variables
+    // 1. Get Live Credentials from Environment Variables
     const consumerKey = process.env.DARAJA_CONSUMER_KEY;
     const consumerSecret = process.env.DARAJA_CONSUMER_SECRET;
     const shortCode = process.env.DARAJA_SHORTCODE;
@@ -10,19 +10,22 @@ export default async function handler(req, res) {
     const callbackUrl = process.env.MPESA_CALLBACK_URL;
 
     try {
-      // 1. Generate Access Token
-      const authRes = await fetch(`https://api.safaricom.co.ke/oauth/v1/generate?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`, {
-        method: 'GET'
-      });
-      const authData = await authRes.json();
+      // 2. Generate Access Token using LIVE API
+      const authResponse = await fetch(
+        `https://api.safaricom.co.ke/oauth/v1/generate?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
+        { method: "GET" }
+      );
+      const authData = await authResponse.json();
       const accessToken = authData.access_token;
 
-      // 2. Prepare Timestamp & Password
+      // 3. Prepare Payload
       const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-      const password = Buffer.from(`${shortCode}${passKey}${timestamp}`).toString('base64');
+      
+      // Create the password using the LIVE shortcode and passkey
+      const stkPassword = Buffer.from(`${shortCode}${passKey}${timestamp}`).toString('base64');
 
-      // 3. Send STK Push Request
-      const stkResponse = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
+      // 4. Send STK Push to LIVE API
+      const response = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
@@ -30,29 +33,30 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           BusinessShortCode: shortCode,
-          Password: password,
+          Password: stkPassword,
           Timestamp: timestamp,
           TransactionType: "CustomerPayBillOnline",
-          Amount: 50,
-          PartyA: phone,
+          Amount: 50, 
+          PartyA: phone, 
           PartyB: shortCode,
           PhoneNumber: phone,
           CallBackURL: callbackUrl,
           AccountReference: "Grant Payment",
-          TransactionDesc: "Grant Disbursement"
+          TransactionDesc: "Payment for Grant"
         })
       });
 
-      const stkData = await stkResponse.json();
-
-      if (stkData.StatusCode === 0) {
-        res.status(200).json({ success: true, message: "STK Push sent successfully" });
+      const data = await response.json();
+      
+      // FIX: Check StatusCode === 0 for success
+      if (data.StatusCode === 0) {
+        res.status(200).json({ status: 'success', message: 'STK Push sent' });
       } else {
-        res.status(500).json({ success: false, message: stkData.errorMessage || "Failed to send STK" });
+        res.status(500).json({ status: 'error', message: data.errorMessage || 'Failed to send STK' });
       }
 
     } catch (error) {
-      res.status(500).json({ success: false, message: "Server Error: " + error.message });
+      res.status(500).json({ status: 'error', message: error.message });
     }
   } else {
     res.setHeader('Allow', ['POST']);
