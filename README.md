@@ -1,6 +1,6 @@
-# Kazi Mtaani Jobs
+# KaziMtaaniJobs
 
-An independent Kenyan opportunities-board prototype with an M-Pesa STK Push verification flow. This project is **not an official Government of Kenya Kazi Mtaani programme**. Replace example listings with real, verified opportunities before launch.
+An independent Kenyan opportunities-board prototype with an M-Pesa STK Push verification flow. This project is **not an official Government of Kenya KaziMtaani programme**. Replace example listings with real, verified opportunities before launch.
 
 ## Run locally
 
