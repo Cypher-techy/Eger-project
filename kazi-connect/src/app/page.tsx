@@ -10,7 +10,7 @@ export default function Home() {
   return <main>
     <div className="topline"><div className="container top-inner"><span><span className="live-dot"/> Opportunities for people across Kenya</span><span className="top-right">Transparent payouts · M-Pesa supported</span></div></div>
     <header className="container nav">
-      <a className="brand" href="#"><span className="brand-icon">K</span><span>Kazi<span className="brand-green">Mashinani</span> Jobs<small>KENYA</small></span></a>
+      <a className="brand" href="#"><span className="brand-icon">K</span><span>Kazi<span className="brand-green">Mtaani</span>Jobs<small>KENYA</small></span></a>
       <nav><a href="#opportunities">Find work</a><a href="#how">How it works</a><a href="#payments">Payments</a></nav>
       <div className="nav-actions"><a className="sign-in" href="/account">Sign in</a><a className="btn btn-dark" href="/account">Create account <ArrowRight size={16}/></a></div>
     </header>
@@ -56,6 +56,6 @@ export default function Home() {
 
     <section className="cta-section" id="get-started"><div className="container cta-inner"><div><div className="eyebrow light">YOUR NEXT CHAPTER</div><h2>Ready to find your<br/>next opportunity?</h2><p>Create an account, verify your phone, and track the funded welcome bonus and withdrawal requests from your dashboard.</p></div><div className="cta-actions"><a className="btn btn-lime" href="/account">Request early access <ArrowRight size={17}/></a><span><ShieldCheck size={15}/> No earnings are guaranteed.</span></div></div></section>
 
-    <footer><div className="container footer-main"><a className="brand footer-brand" href="#"><span className="brand-icon">K</span><span>Kazi<span className="brand-green">Mashinani</span> Jobs<small>KENYA</small></span></a><p>Making online opportunities easier to discover and manage.</p><div className="footer-links"><a href="#opportunities">Opportunities</a><a href="#how">How it works</a><a href="#payments">Payment terms</a><a href="/account">Contact</a></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} KaziMtaaniJobs Kenya</span><span>Built for transparency. Work with confidence.</span></div></footer>
+    <footer><div className="container footer-main"><a className="brand footer-brand" href="#"><span className="brand-icon">K</span><span>Kazi<span className="brand-green">Mtaani</span>Jobs<small>KENYA</small></span></a><p>Making online opportunities easier to discover and manage.</p><div className="footer-links"><a href="#opportunities">Opportunities</a><a href="#how">How it works</a><a href="#payments">Payment terms</a><a href="/account">Contact</a></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} KaziMtaaniJobs Kenya</span><span>Built for transparency. Work with confidence.</span></div></footer>
   </main>;
 }
