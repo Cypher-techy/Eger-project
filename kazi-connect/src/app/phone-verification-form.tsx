@@ -29,7 +29,9 @@ export default function PhoneVerificationForm({ verified }: { verified: boolean 
         if (statusResponse.ok) {
           const status = await statusResponse.json();
           if (status.verified) {
-            setMessage("PAYMENT CONFIRMED — your phone is verified and the eligible KES 750 welcome bonus has been credited to your withdrawable wallet.");
+            setMessage(status.bonusCredited
+              ? "PAYMENT CONFIRMED — your phone is verified and the KES 750 welcome bonus is in your withdrawable wallet."
+              : "PAYMENT CONFIRMED — your phone is verified. The welcome bonus is not currently available on this account; contact support for promotion eligibility.");
             router.refresh();
             return;
           }
