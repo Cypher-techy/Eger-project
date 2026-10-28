@@ -1,14 +1,25 @@
-const response = await fetch("/api/stkpush", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ phone: formattedPhone, fullName }),
-});
+try {
+  const response = await fetch("/api/stkpush", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ phone: formattedPhone, fullName }),
+  });
 
-const result = await response.json();
+  // Check if the response is actually OK
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 
-if (result.status === 'success') {
-  // Show success message
-} else {
-  // Show the specific error message from the server
-  alert("Error: " + (result.message || "Connection issue"));
+  const result = await response.json();
+  
+  if (result.status === 'success') {
+    alert("STK Push sent! Please check your phone.");
+    // Handle success UI state
+  } else {
+    alert(`Server Error: ${result.message || 'Unknown error'}`);
+  }
+
+} catch (error) {
+  console.error("Fetch Error:", error);
+  alert(`Connection Issue: ${error.message}`);
 }
