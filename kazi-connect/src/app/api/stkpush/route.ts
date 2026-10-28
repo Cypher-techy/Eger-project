@@ -121,7 +121,7 @@ export async function POST(request: Request) {
         PartyB: cfg.partyB,
         PhoneNumber: phone,
         CallBackURL: cfg.callbackUrl,
-        AccountReference: "KAZIMASHINANI",
+        AccountReference: "KAZIMTAANI",
         TransactionDesc: "Phone verification fee"
       }),
       signal: AbortSignal.timeout(15000), cache: "no-store"
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
       checkoutRequestId: data.CheckoutRequestID
     });
   } catch (error) {
-    console.error("KaziConnect STK initiation failed:", error instanceof Error ? error.message : "unknown error");
+    console.error("KaziMtaaniJobs STK initiation failed:", error instanceof Error ? error.message : "unknown error");
     if (paymentId) await admin.from("mpesa_payments").update({ status: "failed", result_description: "Unable to initiate payment" }).eq("id", paymentId);
     return NextResponse.json({ status: "error", message: "Unable to initiate M-Pesa payment. No successful payment has been recorded." }, { status: 502 });
   }
