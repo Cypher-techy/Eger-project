@@ -1,16 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// ✅ CRITICAL FIX: Serve static files from the 'public' folder
+app.use(express.json());
+app.all('/api/stkpush', require('./api/stkpush'));
+app.all('/api/callback', require('./api/callback'));
 app.use(express.static(path.join(__dirname, 'public')));
-
-// ✅ CRITICAL FIX: Send index.html for any other request (catch-all)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, '0.0.0.0', () => console.log(`Server is running on port ${port}`));
+}
+module.exports = app;
