@@ -1,28 +1,46 @@
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { phone, fullName } = req.body; // e.g., "254712345678"
+    const { phone, fullName } = req.body;
+
+    // 1. Get Credentials
+    const consumerKey = process.env.DARAJA_CONSUMER_KEY;
+    const consumerSecret = process.env.DARAJA_CONSUMER_SECRET;
+    const shortCode = process.env.DARAJA_SHORTCODE;
+    const passKey = process.env.DARAJA_PASSKEY;
+    const callbackUrl = process.env.MPESA_CALLBACK_URL;
+
+    // DEBUG: Log what we received
+    console.log("Incoming Request:", { phone, fullName });
+    console.log("Env Vars Loaded:", { 
+      hasKey: !!consumerKey, 
+      hasShort: !!shortCode, 
+      hasCallback: !!callbackUrl 
+    });
+
+    if (!consumerKey || !shortCode) {
+      return res.status(500).json({ status: 'error', message: 'Missing Environment Variables' });
+    }
 
     try {
-      // 1. Generate Access Token
-      const authResponse = await fetch("https://sandbox.safaricom.co.ke/oauth/v1/generate?consumer_key=YOUR_CONSUMER_KEY&consumer_secret=YOUR_CONSUMER_SECRET", {
-        method: "GET"
-      });
+      // 2. Generate Access Token
+      const authResponse = await fetch(
+        `https://api.safaricom.co.ke/oauth/v1/generate?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
+        { method: "GET" }
+      );
+      
+      if (!authResponse.ok) {
+        throw new Error(`Auth failed: ${authResponse.statusText}`);
+      }
+
       const authData = await authResponse.json();
       const accessToken = authData.access_token;
 
-      // 2. Prepare STK Push Payload
+      // 3. Prepare Payload
       const timestamp = new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14);
-      const password = Buffer.from(`${process.env.B2C_LICENSE_KEY || 'your_license_key'}${timestamp}`).toString('base64'); 
-      // Note: For Sandbox, use B2C License Key or Business Shortcode + Passkey as per Safaricom docs
-      
-      // Actually, for STK Push (Lipa Na M-Pesa Online), we use Business Shortcode (e.g., 174379) and Passkey
-      // Let's use the standard Sandbox credentials:
-      const shortCode = "174379"; 
-      const passKey = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c73305c349e35d0cb0cccba9d079ee"; 
-
       const stkPassword = Buffer.from(`${shortCode}${passKey}${timestamp}`).toString('base64');
 
-      const response = await fetch("https://sandbox.safaricom.co.mp/stkpush/v1/processrequest", {
+      // 4. Send STK Push
+      const response = await fetch("https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
@@ -33,11 +51,11 @@ export default async function handler(req, res) {
           Password: stkPassword,
           Timestamp: timestamp,
           TransactionType: "CustomerPayBillOnline",
-          Amount: 50, // KES 50
-          PartyA: phone, // The customer's number
+          Amount: 50, 
+          PartyA: phone, 
           PartyB: shortCode,
           PhoneNumber: phone,
-          CallBackURL: "https://your-vercel-url.com/api/callback", // Must be HTTPS
+          CallBackURL: callbackUrl,
           AccountReference: "Grant Payment",
           TransactionDesc: "Payment for Grant"
         })
@@ -45,13 +63,17 @@ export default async function handler(req, res) {
 
       const data = await response.json();
       
-      if (data.ErrorCode === "Success") {
+      // LOG THE RESULT
+      console.log("M-Pesa Response:", data);
+
+      if (data.StatusCode === 0) {
         res.status(200).json({ status: 'success', message: 'STK Push sent' });
       } else {
-        res.status(500).json({ status: 'error', message: data.errorMessage || 'Failed' });
+        res.status(500).json({ status: 'error', message: data.errorMessage || 'Failed to send STK' });
       }
 
     } catch (error) {
+      console.error("Error in stkpush:", error.message);
       res.status(500).json({ status: 'error', message: error.message });
     }
   } else {
