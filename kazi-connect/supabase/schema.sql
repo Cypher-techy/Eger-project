@@ -125,3 +125,64 @@ for each row execute procedure public.handle_new_user();
 
 -- Intentionally no automatic KSh 750 cash credit is created by this schema.
 -- Implement an audited, idempotent promotion-claim function only after funds are reserved.
+
+-- Atomic confirmation prevents a payment from being marked confirmed if profile verification fails.
+-- Call this only after the server has independently queried Safaricom and validated amount/phone/receipt.
+create or replace function public.confirm_phone_verification(
+  p_checkout_request_id text,
+  p_receipt_number text,
+  p_raw_callback jsonb
+)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  payment_row public.mpesa_payments%rowtype;
+begin
+  select * into payment_row
+  from public.mpesa_payments
+  where checkout_request_id = p_checkout_request_id
+  for update;
+
+  if not found then
+    raise exception 'Payment not found';
+  end if;
+
+  if payment_row.status = 'confirmed' then
+    return 'already_confirmed';
+  end if;
+
+  if payment_row.status <> 'pending'
+     or payment_row.purpose <> 'phone_verification'
+     or payment_row.amount_kes <> 70
+     or p_receipt_number is null
+     or length(trim(p_receipt_number)) = 0 then
+    raise exception 'Payment is not eligible for confirmation';
+  end if;
+
+  update public.profiles
+  set phone_e164 = payment_row.phone_e164,
+      phone_verified_at = now()
+  where id = payment_row.user_id;
+
+  if not found then
+    raise exception 'Profile not found';
+  end if;
+
+  update public.mpesa_payments
+  set status = 'confirmed',
+      result_code = 0,
+      result_description = 'Payment confirmed by Safaricom STK Query',
+      receipt_number = p_receipt_number,
+      raw_callback = p_raw_callback,
+      confirmed_at = now()
+  where id = payment_row.id;
+
+  return 'confirmed';
+end;
+$$;
+
+revoke all on function public.confirm_phone_verification(text,text,jsonb) from public, anon, authenticated;
+grant execute on function public.confirm_phone_verification(text,text,jsonb) to service_role;
