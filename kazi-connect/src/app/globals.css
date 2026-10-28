@@ -11,3 +11,51 @@
 @media(max-width:680px){.auth-card{padding:23px;margin-top:35px}.auth-brand{gap:10px}.back-link{font-size:9px}.dash-nav{padding:0 16px;height:66px}.dash-nav-right{gap:10px;font-size:9px}.dash-wrap{width:calc(100% - 30px);padding-top:28px}.dash-welcome{align-items:flex-start;flex-direction:column}.dash-welcome h1{font-size:25px}.dash-cards{grid-template-columns:1fr}.dash-cards article{padding:16px}.dash-card-icon{margin-bottom:12px}.dash-columns{grid-template-columns:1fr}.dash-panel{padding:17px}}
 
 .verification-panel{margin-top:18px}.verification-panel .dash-panel-head{margin-bottom:17px}.verify-form{max-width:530px}.verify-form>label:not(.consent-line){display:block;font-size:10px;font-weight:700;color:#385543;margin-bottom:8px}.verify-form>input{display:block;width:100%;max-width:360px;border:1px solid #dfe7dc;background:#fff;border-radius:8px;padding:12px;font:500 12px 'DM Sans';outline:none;color:#1b3828}.verify-form>input:focus{border-color:#58a878;box-shadow:0 0 0 3px #20804f12}.consent-line{display:flex;align-items:flex-start;gap:9px;max-width:520px;margin:13px 0;color:#6e7e72;font-size:9px;line-height:1.7}.consent-line input{margin-top:2px;accent-color:#13794d;flex-shrink:0}.verify-submit{margin-top:3px}.verify-submit:disabled{opacity:.55;cursor:not-allowed}.verification-result{display:flex;align-items:center;gap:9px;color:#23784b;background:#edf7e9;padding:12px;border-radius:8px;font-size:11px;font-weight:700}.verification-panel .form-error,.verification-panel .form-success{max-width:530px}
+
+
+/* KaziMashinani Jobs: gold, white and charcoal visual system */
+:root{--ink:#242424;--muted:#6d6d6d;--green:#b58b00;--deep:#8c6b00;--lime:#ffd700;--cream:#fffdf7;--line:#eee5c6}
+body{background:#fff;color:#242424}
+.topline{background:#242424;color:#f7f1d9}
+.live-dot,.eyebrow-star{background:#ffd700;color:#8c6b00}
+.brand-icon{background:#242424;color:#ffd700}
+.brand-green,.nav nav a:hover,.sign-in:hover{color:#b58b00}
+.btn-dark{background:#242424;color:#fff}
+.btn-dark:hover{background:#444}
+.btn-primary{background:#ffd700;color:#242424;box-shadow:0 7px 18px #b58b001f}
+.btn-primary:hover{background:#e8c000;box-shadow:0 10px 25px #b58b0030}
+.btn-outline{border-color:#e9dfb9;background:#fff;color:#303030}
+.hero{background:linear-gradient(110deg,#fff 0%,#fff 55%,#fff9df 100%)}
+.hero h1{color:#242424}
+.hero h1 span,.eyebrow,.play,.text-link{color:#a67c00}
+.hero-orb{border-color:#d8c77b55}
+.art-glow{background:radial-gradient(circle,#fff0a3 0%,#fff8d9 42%,#fff9df00 70%)}
+.balance-card{background:linear-gradient(120deg,#292929,#414141);box-shadow:0 9px 20px #24242422}
+.balance-amount span{color:#ffd700}
+.pending-chip{border-color:#ffd70070;color:#fff4bd}
+.balance-line span{background:#ffd700}
+.stat-icon.green,.activity-icon,.float-icon{background:#fff5c4;color:#8c6b00}
+.stat-icon.yellow,.float-icon.lime{background:#fff7dc;color:#8c6b00}
+.avatar-stack span:nth-child(4){background:#ffd700;color:#242424}
+.job-card:hover{border-color:#e1cf79}
+.job-icon{background:#fff4bd;color:#8c6b00}
+.job-tag{background:#fff8dc;color:#866700}
+.step-icon,.metric-last .metric-icon{background:#fff4bd;color:#8c6b00}
+.payment-section{background:#fff}
+.payment-panel{border-color:#eee5c6}
+.mpesa-mark{background:#242424;color:#ffd700}
+.cta-section,footer{background:#242424}
+.btn-lime{background:#ffd700;color:#242424}
+.btn-lime:hover{background:#e8c000}
+.footer-brand .brand-icon{background:#ffd700;color:#242424}
+.footer-brand .brand-green{color:#ffd700}
+.auth-page{background:linear-gradient(130deg,#fff,#fff9df)}
+.auth-symbol{background:#fff4bd;color:#8c6b00}
+.auth-tabs button.active{color:#242424;border-color:#ffd700;background:#fff8d8}
+.auth-submit{background:#ffd700;color:#242424}
+.dash-card-icon,.dash-card-icon.yellow,.dash-card-icon.purple{background:#fff4bd;color:#8c6b00}
+.state-pill{background:#fff4bd;color:#6f5600}
+.verify-submit{background:#ffd700;color:#242424}
+.verification-result{background:#fff8d8;color:#4e4100;border-color:#e8d68c}
+.withdrawal-panel{margin-top:18px}
+@media(max-width:640px){.container{width:min(100% - 28px,1160px)}}
