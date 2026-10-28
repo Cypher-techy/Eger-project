@@ -8,4 +8,6 @@ POST JSON `{ "phone": "0712345678" }` to `/api/stkpush`. Kenyan numbers in `07..
 
 Callbacks are publicly reachable and are not authenticated by this implementation. Do not use a callback alone as proof of payment or grant access based on it; verify the transaction independently with Safaricom before fulfilling an order. Protect and monitor the endpoint at the deployment layer.
 
-Run `npm test` for automated tests. The repository does not currently include a runnable frontend (`public/`) or an `/api/apply` endpoint.
+The application form POSTs `fullName`, `regNumber` and `phone` to `/api/apply`. The server saves submissions to the `applications` table using the Supabase service role key; a successful submission is pending review, not approval or payment. The form does not send an STK push or verify an OTP. Deploy the Node server (or configure equivalent serverless routing) so `/api/apply` reaches the backend; a static-only deployment cannot serve this endpoint.
+
+Run `npm test` for automated tests.
