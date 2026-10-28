@@ -35,7 +35,7 @@ function getConfig() {
   const callbackUrl = env.MPESA_CALLBACK_URL;
   const environment = env.MPESA_ENVIRONMENT ?? env.DARAJA_ENVIRONMENT ?? "sandbox";
   const enabled = env.MPESA_ENABLED ?? "true";
-  const transactionType = env.MPESA_TRANSACTION_TYPE ?? "CustomerPayBillOnline";
+  const transactionType = env.MPESA_TRANSACTION_TYPE ?? "CustomerBuyGoodsOnline";
   const partyB = env.MPESA_PARTY_B ?? (transactionType === "CustomerPayBillOnline" ? shortCode : undefined);
   return { key, secret, shortCode, passKey, callbackUrl, environment, enabled, transactionType, partyB };
 }
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
         PartyB: cfg.partyB,
         PhoneNumber: phone,
         CallBackURL: cfg.callbackUrl,
-        AccountReference: "KAZICONNECT",
+        AccountReference: "KAZIMASHINANI",
         TransactionDesc: "Phone verification fee"
       }),
       signal: AbortSignal.timeout(15000), cache: "no-store"
