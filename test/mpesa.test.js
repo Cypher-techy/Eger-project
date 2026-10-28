@@ -69,3 +69,41 @@ test('callback saves parsed success and failure results and handles storage erro
   global.fetch = async () => new Response(JSON.stringify({ message: 'database error' }), { status: 500 });
   assert.equal((await request('/api/callback', callback)).status, 500);
 });
+
+test('MPESA settings configure production Buy Goods and take precedence over legacy settings', async () => {
+  Object.assign(process.env, {
+    MPESA_ENVIRONMENT: 'production', MPESA_ENABLED: 'true',
+    MPESA_TRANSACTION_TYPE: 'CustomerBuyGoodsOnline', MPESA_PARTY_B: '6706411',
+    MPESA_CONSUMER_KEY: 'live-key', MPESA_CONSUMER_SECRET: 'live-secret',
+    MPESA_SHORTCODE: '8252843', MPESA_PASSKEY: 'live-pass'
+  });
+  const calls = [];
+  global.fetch = async (url, options) => {
+    calls.push({ url, options });
+    return new Response(JSON.stringify(calls.length === 1 ? { access_token: 'token' } : {
+      ResponseCode: '0', CheckoutRequestID: 'buy-goods'
+    }), { status: 200 });
+  };
+  try {
+    assert.equal((await request('/api/stkpush', { phone: '0712345678' })).status, 200);
+    assert.match(calls[0].url, /^https:\/\/api\.safaricom\.co\.ke\//);
+    assert.equal(calls[0].options.headers.Authorization, `Basic ${Buffer.from('live-key:live-secret').toString('base64')}`);
+    const payload = JSON.parse(calls[1].options.body);
+    assert.equal(payload.TransactionType, 'CustomerBuyGoodsOnline');
+    assert.equal(payload.BusinessShortCode, '8252843');
+    assert.equal(payload.PartyB, '6706411');
+    assert.equal(payload.Password, Buffer.from(`8252843live-pass${payload.Timestamp}`).toString('base64'));
+    process.env.MPESA_ENABLED = 'false';
+    assert.equal((await request('/api/stkpush', { phone: '0712345678' })).status, 503);
+    assert.equal(calls.length, 2);
+    process.env.MPESA_ENABLED = 'true';
+    delete process.env.MPESA_PARTY_B;
+    assert.equal((await request('/api/stkpush', { phone: '0712345678' })).status, 500);
+    process.env.MPESA_TRANSACTION_TYPE = 'invalid';
+    assert.equal((await request('/api/stkpush', { phone: '0712345678' })).status, 500);
+    assert.equal(calls.length, 2);
+  } finally {
+    for (const name of ['MPESA_ENVIRONMENT', 'MPESA_ENABLED', 'MPESA_TRANSACTION_TYPE', 'MPESA_PARTY_B',
+      'MPESA_CONSUMER_KEY', 'MPESA_CONSUMER_SECRET', 'MPESA_SHORTCODE', 'MPESA_PASSKEY']) delete process.env[name];
+  }
+});
