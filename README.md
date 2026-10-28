@@ -8,6 +8,6 @@ POST JSON `{ "phone": "0712345678" }` to `/api/stkpush`. Kenyan numbers in `07..
 
 Callbacks are publicly reachable and are not authenticated by this implementation. Do not use a callback alone as proof of payment or grant access based on it; verify the transaction independently with Safaricom before fulfilling an order. Protect and monitor the endpoint at the deployment layer.
 
-The application form POSTs `fullName`, `regNumber` and `phone` to `/api/apply`. The server saves submissions to the `applications` table using the Supabase service role key; a successful submission is pending review, not approval or payment. The form does not send an STK push or verify an OTP. Deploy the Node server (or configure equivalent serverless routing) so `/api/apply` reaches the backend; a static-only deployment cannot serve this endpoint.
+The application form POSTs `fullName`, `regNumber` and `phone` to `/api/apply`. The server saves submissions to the `applications` table using the Supabase service role key; a successful submission is pending review, not approval or payment. After submission, the form offers a separate optional KES 50 payment button. It sends an STK push only when clicked; an accepted prompt is not confirmation of payment. The form does not verify an OTP. Deploy the Node server (or configure equivalent serverless routing) so `/api/apply` reaches the backend; a static-only deployment cannot serve this endpoint.
 
 Run `npm test` for automated tests.
