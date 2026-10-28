@@ -307,6 +307,18 @@
             </form>
 
             <p id="formMessage" role="status" aria-live="polite"></p>
+            <section id="paymentSection" hidden aria-labelledby="paymentHeading">
+                <h3 id="paymentHeading">Optional M-Pesa payment</h3>
+                <p>Send a request to pay KES 50 from your M-Pesa account. This is a charge, not a grant disbursement. Submitting an application does not require this payment.</p>
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="paymentPhone">M-Pesa phone number to charge</label>
+                        <input type="tel" id="paymentPhone" autocomplete="tel" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="paymentBtn">Request KES 50 M-Pesa payment</button>
+                </form>
+                <p id="paymentMessage" role="status" aria-live="polite"></p>
+            </section>
         </div>
         <div class="footer"><p>Student Relief Fund application</p></div>
     </div>
@@ -315,10 +327,16 @@
         const form = document.getElementById('mainForm');
         const button = document.getElementById('verifyBtn');
         const message = document.getElementById('formMessage');
+        const paymentSection = document.getElementById('paymentSection');
+        const paymentForm = document.getElementById('paymentForm');
+        const paymentPhone = document.getElementById('paymentPhone');
+        const paymentButton = document.getElementById('paymentBtn');
+        const paymentMessage = document.getElementById('paymentMessage');
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
             button.disabled = true;
             message.textContent = 'Submitting application…';
+            const submittedPhone = document.getElementById('phoneNumber').value;
             try {
                 const response = await fetch('/api/apply', {
                     method: 'POST',
@@ -336,10 +354,35 @@
                 }
                 message.textContent = data.message || 'Application submitted for review.';
                 form.reset();
+                paymentPhone.value = submittedPhone;
+                paymentSection.hidden = false;
+                paymentButton.disabled = false;
+                paymentMessage.textContent = '';
             } catch (error) {
                 message.textContent = error.message || 'Connection issue. Please try again.';
             } finally {
                 button.disabled = false;
+            }
+        });
+        paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            paymentButton.disabled = true;
+            paymentMessage.textContent = 'Requesting an M-Pesa prompt…';
+            try {
+                const response = await fetch('/api/stkpush', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: paymentPhone.value })
+                });
+                let data;
+                try { data = await response.json(); } catch (_) { data = {}; }
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error(data.message || `Payment request failed (HTTP ${response.status}).`);
+                }
+                paymentMessage.textContent = 'Payment prompt accepted. Check your phone; payment is not yet confirmed. Reference: ' + data.checkoutRequestId;
+            } catch (error) {
+                paymentMessage.textContent = (error.message || 'Connection issue.') + ' Check your phone before trying again; a prompt may still arrive.';
+                paymentButton.disabled = false;
             }
         });
     </script>
