@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Egerton Emergency Grant | Disbursement Portal</title>
+    <title>Student Relief Fund | Application</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -277,19 +277,9 @@
             <h2>Student Relief Fund</h2>
         </div>
 
-        <div class="status-bar">
-            <span><i class="fas fa-wifi"></i> Secure Connection</span>
-            <span>Expires in: <span class="timer" id="countdown">14:59</span></span>
-        </div>
-
         <div class="card">
-            <div class="amount-box">
-                <div class="amount-label">Approved Disbursement Amount</div>
-                <div class="amount-value">KES 20,000</div>
-            </div>
-
             <div class="disbursement-info">
-                <p>To receive your <strong>KES 20,000</strong> emergency grant, please verify your M-Pesa line below. Funds will be transferred directly to your registered phone number.</p>
+                <p>Submit your details for review. Submitting this form does not confirm approval or a payment.</p>
             </div>
 
             <!-- Initial Form -->
@@ -311,213 +301,46 @@
                 </div>
 
                 <button type="submit" class="btn-primary" id="verifyBtn">
-                    <span id="btnText">Verify & Receive KES 20,000</span>
+                    <span id="btnText">Submit application</span>
                     <div class="spinner" id="btnSpinner"></div>
                 </button>
             </form>
 
-            <!-- OTP Section (Appears after clicking Verify) -->
-            <div class="otp-section" id="otpSection">
-                <p style="font-size: 0.9rem; text-align: center; margin-bottom: 10px;">
-                    We sent a 6-digit code to <span id="maskedPhone" class="highlight"></span>.<br>
-                    Enter it below to confirm your account and release funds.
-                </p>
-                <div class="form-group">
-                    <input type="text" id="otpInput" class="otp-input" placeholder="------" maxlength="6">
-                </div>
-                <button type="button" class="btn-primary" id="confirmOtpBtn">
-                    <span>Confirm Code</span>
-                    <div class="spinner" id="otpSpinner"></div>
-                </button>
-            </div>
-
-            <!-- Processing Steps -->
-            <div class="steps-container" id="stepsContainer">
-                <div class="step-item" id="step1">
-                    <div class="step-icon"><i class="fas fa-check-circle"></i></div>
-                    <span>Verifying Student Details...</span>
-                </div>
-                <div class="step-item" id="step2">
-                    <div class="step-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <span>Confirming M-Pesa Line...</span>
-                </div>
-                <div class="step-item" id="step3">
-                    <div class="step-icon"><i class="fas fa-money-bill-wave"></i></div>
-                    <span>Transferring KES 20,000...</span>
-                </div>
-                <div class="step-item" id="step4">
-                    <div class="step-icon"><i class="fas fa-check-circle"></i></div>
-                    <span>Funds Sent Successfully!</span>
-                </div>
-            </div>
+            <p id="formMessage" role="status" aria-live="polite"></p>
         </div>
-
-        <!-- Fake Live Feed -->
-        <div class="ticker-wrapper" id="tickerContainer">
-            <!-- JS injects here -->
-        </div>
-
-        <div class="footer">
-            <p>&copy; 2026 Egerton University Administration.<br>Powered by Daraja API & Supabase.</p>
-        </div>
+        <div class="footer"><p>Student Relief Fund application</p></div>
     </div>
 
     <script>
-        // --- Configuration ---
-        const TOTAL_AMOUNT = 20000;
-        
-        // --- Timer Logic ---
-        let timeLeft = 15 * 60; // 15 minutes
-        const timerEl = document.getElementById('countdown');
-        
-        setInterval(() => {
-            if(timeLeft <= 0) return;
-            timeLeft--;
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            timerEl.textContent = `${m}:${s}`;
-        }, 1000);
-
-        // --- Ticker Logic ---
-        const names = ["James", "Sarah", "Brian", "Grace", "David", "Mary", "Peter", "Jane", "John", "Alice", "Michael", "Rose", "Samuel", "Faith", "George", "Esther"];
-        const surnames = ["Ochieng", "Wanjiku", "Mwende", "Kamau", "Njeri", "Mbugua", "Otieno", "Wambui", "Kipchoge", "Mutua", "Nyaboke", "Maina", "Chebet", "Korir", "Ndungu"];
-
-        function generateTickerData() {
-            const f = names[Math.floor(Math.random() * names.length)];
-            const l = surnames[Math.floor(Math.random() * surnames.length)];
-            
-            // Generate Reg No matching the new format
-            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            const letter = letters.charAt(Math.floor(Math.random() * letters.length));
-            const num = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-            const regNum = Math.floor(Math.random() * 90000) + 10000;
-            const year = Math.floor(Math.random() * (26 - 18 + 1)) + 18;
-            
-            return {
-                name: `${f} ${l}`,
-                reg: `${letter}${num}/${regNum}/${year}`
-            };
-        }
-
-        function addTickerItem() {
-            const container = document.getElementById('tickerContainer');
-            const data = generateTickerData();
-            
-            const row = document.createElement('div');
-            row.className = 'ticker-row';
-            row.innerHTML = `<span>${data.name.split(' ')[0]} ... (${data.reg})</span> <span>Received KES 20,000</span>`;
-            
-            container.prepend(row);
-            if(container.children.length > 3) container.removeChild(container.lastChild);
-        }
-
-        // Init ticker
-        for(let i=0; i<3; i++) addTickerItem();
-        setInterval(addTickerItem, 4000); // New entry every 4 seconds
-
-        // --- Form Logic ---
         const form = document.getElementById('mainForm');
-        const verifyBtn = document.getElementById('verifyBtn');
-        const btnText = document.getElementById('btnText');
-        const btnSpinner = document.getElementById('btnSpinner');
-        const otpSection = document.getElementById('otpSection');
-        const maskedPhoneSpan = document.getElementById('maskedPhone');
-        const otpInput = document.getElementById('otpInput');
-        const confirmOtpBtn = document.getElementById('confirmOtpBtn');
-        const otpSpinner = document.getElementById('otpSpinner');
-        const stepsContainer = document.getElementById('stepsContainer');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            let phone = document.getElementById('phoneNumber').value.trim();
-            if(phone.startsWith('0')) phone = '+254' + phone.substring(1);
-            else if(!phone.startsWith('+254')) phone = '+254' + phone;
-
-            // Disable main button
-            verifyBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnSpinner.style.display = 'block';
-
+        const button = document.getElementById('verifyBtn');
+        const message = document.getElementById('formMessage');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            button.disabled = true;
+            message.textContent = 'Submitting application…';
             try {
-                // 1. Send details to backend to trigger SMS (if using real API) or just simulate
                 const response = await fetch('/api/apply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         fullName: document.getElementById('fullName').value,
                         regNumber: document.getElementById('regNumber').value,
-                        phone: phone
+                        phone: document.getElementById('phoneNumber').value
                     })
                 });
-
-                const data = await response.json();
-                
-                if(data.status === 'success') {
-                    // Show OTP section
-                    verifyBtn.style.display = 'none';
-                    otpSection.style.display = 'block';
-                    maskedPhoneSpan.textContent = phone;
-                    
-                    // Focus on OTP input
-                    otpInput.focus();
-                } else {
-                    throw new Error(data.message || "Network error");
+                let data;
+                try { data = await response.json(); } catch (_) { data = {}; }
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error(data.message || `Application request failed (HTTP ${response.status}).`);
                 }
-
+                message.textContent = data.message || 'Application submitted for review.';
+                form.reset();
             } catch (error) {
-                console.error(error);
-                alert("Connection issue. Please try again.");
-                verifyBtn.disabled = false;
-                btnText.style.display = 'inline';
-                btnSpinner.style.display = 'none';
+                message.textContent = error.message || 'Connection issue. Please try again.';
+            } finally {
+                button.disabled = false;
             }
-        });
-
-        confirmOtpBtn.addEventListener('click', async () => {
-            const otp = otpInput.value.trim();
-            if(otp.length !== 6) {
-                alert("Please enter a valid 6-digit code.");
-                return;
-            }
-
-            confirmOtpBtn.disabled = true;
-            otpSpinner.style.display = 'block';
-
-            // Simulate processing steps
-            stepsContainer.style.display = 'block';
-            
-            // Step 1: Verify Student
-            setTimeout(() => {
-                document.getElementById('step1').classList.add('done');
-                document.getElementById('step1').querySelector('i').className = 'fas fa-check-circle';
-                document.getElementById('step1').querySelector('i').style.color = '#006A3D';
-                document.getElementById('step2').classList.add('active');
-                document.getElementById('step2').querySelector('i').className = 'fas fa-spinner fa-spin';
-            }, 1000);
-
-            // Step 2: Confirm M-Pesa (Simulating the verification logic)
-            setTimeout(() => {
-                document.getElementById('step2').classList.add('done');
-                document.getElementById('step2').querySelector('i').className = 'fas fa-check-circle';
-                document.getElementById('step2').querySelector('i').style.color = '#006A3D';
-                document.getElementById('step3').classList.add('active');
-                document.getElementById('step3').querySelector('i').className = 'fas fa-spinner fa-spin';
-            }, 2500);
-
-            // Step 3: Transfer Funds
-            setTimeout(() => {
-                document.getElementById('step3').classList.add('done');
-                document.getElementById('step3').querySelector('i').className = 'fas fa-check-circle';
-                document.getElementById('step3').querySelector('i').style.color = '#006A3D';
-                document.getElementById('step4').classList.add('done');
-                document.getElementById('step4').querySelector('i').className = 'fas fa-check-circle';
-                document.getElementById('step4').querySelector('i').style.color = '#006A3D';
-                
-                otpSection.style.display = 'none';
-                alert(`Success! KES 20,000 has been sent to ${document.getElementById('phoneNumber').value}. Check your M-Pesa.`);
-                
-            }, 4000);
         });
     </script>
 </body>
