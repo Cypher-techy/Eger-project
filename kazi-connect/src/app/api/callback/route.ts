@@ -112,23 +112,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ ResultCode: 0, ResultDesc: "Callback received; confirmation pending" });
     }
 
-    const { data: current } = await admin.from("mpesa_payments").select("status").eq("id", payment.id).maybeSingle();
-    if (current?.status === "confirmed") return NextResponse.json({ ResultCode: 0, ResultDesc: "Already processed" });
-
-    // Mark the matching fee paid first; the unique checkout ID and status check make retries safe.
-    const { error: paymentError } = await admin.from("mpesa_payments").update({
-      status: "confirmed", result_code: 0,
-      result_description: String(callback.ResultDesc || "Payment confirmed by Safaricom"),
-      receipt_number: receipt, raw_callback: body, confirmed_at: new Date().toISOString()
-    }).eq("id", payment.id).eq("status", "pending");
-    if (paymentError) throw paymentError;
-
-    const { error: profileError } = await admin.from("profiles").update({
-      phone_e164: payment.phone_e164, phone_verified_at: new Date().toISOString()
-    }).eq("id", payment.user_id);
-    if (profileError) throw profileError;
-
-    return NextResponse.json({ ResultCode: 0, ResultDesc: "Payment confirmed" });
+    const { data: confirmation, error: confirmationError } = await admin.rpc("confirm_phone_verification", {
+      p_checkout_request_id: callback.CheckoutRequestID,
+      p_receipt_number: receipt,
+      p_raw_callback: body
+    });
+    if (confirmationError) throw confirmationError;
+    return NextResponse.json({
+      ResultCode: 0,
+      ResultDesc: confirmation === "already_confirmed" ? "Already processed" : "Payment confirmed"
+    });
   } catch (error) {
     console.error("Safaricom callback confirmation failed:", error instanceof Error ? error.message : "unknown error");
     // Return an error so Safaricom/reconciliation can retry; never mark verified on uncertainty.
