@@ -1,6 +1,6 @@
 # Relief Hub: M-Pesa STK Push
 
-Run `npm install`, copy `.env.example` to `.env`, fill in the Daraja and Supabase credentials, and run `npm start`. Set `DARAJA_ENVIRONMENT` to `sandbox` or `production` and use matching credentials, shortcode and passkey. Apply `supabase/schema.sql` in Supabase. Keep the service role key on the server only.
+Run `npm install`, copy `.env.example` to `.env`, fill in the Daraja and Supabase credentials, and run `npm start`. Set `MPESA_ENVIRONMENT` to `sandbox` or `production` and use matching `MPESA_CONSUMER_KEY`, `MPESA_CONSUMER_SECRET`, `MPESA_SHORTCODE` and `MPESA_PASSKEY`. Set `MPESA_ENABLED=false` to disable STK requests (`true` by default). Set `MPESA_TRANSACTION_TYPE` to `CustomerPayBillOnline` (default) or `CustomerBuyGoodsOnline`. For Buy Goods, set `MPESA_PARTY_B` to the till/Party B registered with Safaricom; for PayBill it defaults to the shortcode. Verify the correct shortcode, Party B and passkey for your Daraja registration with Safaricom. The legacy `DARAJA_ENVIRONMENT`, `DARAJA_CONSUMER_KEY`, `DARAJA_CONSUMER_SECRET`, `DARAJA_SHORTCODE` and `DARAJA_PASSKEY` remain supported when their corresponding `MPESA_*` variables are absent; `MPESA_*` takes precedence. Apply `supabase/schema.sql` in Supabase. Keep the service role key on the server only.
 
 `MPESA_CALLBACK_URL` must be a publicly accessible HTTPS URL pointing to `/api/callback`; localhost cannot receive Safaricom callbacks. Configure a deployed server or a secure tunnel for local testing.
 
