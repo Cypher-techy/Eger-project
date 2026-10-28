@@ -9,16 +9,10 @@ export default async function handler(req, res) {
     const passKey = process.env.DARAJA_PASSKEY;
     const callbackUrl = process.env.MPESA_CALLBACK_URL;
 
-    // DEBUG: Log what we received
-    console.log("Incoming Request:", { phone, fullName });
-    console.log("Env Vars Loaded:", { 
-      hasKey: !!consumerKey, 
-      hasShort: !!shortCode, 
-      hasCallback: !!callbackUrl 
-    });
-
+    // Check if vars are loaded
     if (!consumerKey || !shortCode) {
-      return res.status(500).json({ status: 'error', message: 'Missing Environment Variables' });
+      console.error("Missing Env Vars");
+      return res.status(500).json({ status: 'error', message: 'Server configuration error' });
     }
 
     try {
@@ -28,11 +22,10 @@ export default async function handler(req, res) {
         { method: "GET" }
       );
       
-      if (!authResponse.ok) {
-        throw new Error(`Auth failed: ${authResponse.statusText}`);
-      }
-
       const authData = await authResponse.json();
+      if (!authData.access_token) {
+        throw new Error("Failed to get access token");
+      }
       const accessToken = authData.access_token;
 
       // 3. Prepare Payload
@@ -63,17 +56,17 @@ export default async function handler(req, res) {
 
       const data = await response.json();
       
-      // LOG THE RESULT
-      console.log("M-Pesa Response:", data);
-
-      if (data.StatusCode === 0) {
-        res.status(200).json({ status: 'success', message: 'STK Push sent' });
-      } else {
-        res.status(500).json({ status: 'error', message: data.errorMessage || 'Failed to send STK' });
+      // If M-Pesa returns an error (e.g., Invalid Callback URL)
+      if (data.StatusCode !== 0) {
+        console.error("M-Pesa Error:", data.errorMessage);
+        return res.status(500).json({ status: 'error', message: data.errorMessage || 'STK Push failed' });
       }
 
+      // Success
+      res.status(200).json({ status: 'success', message: 'STK Push sent', requestId: data.CheckResult?.RequestId });
+
     } catch (error) {
-      console.error("Error in stkpush:", error.message);
+      console.error("Fetch Error:", error.message);
       res.status(500).json({ status: 'error', message: error.message });
     }
   } else {
