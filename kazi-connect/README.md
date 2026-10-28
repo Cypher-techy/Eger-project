@@ -1,4 +1,4 @@
-# KaziMashinani Jobs
+# KaziMtaaniJobs
 
 A mobile-first Next.js + Supabase opportunities platform with a gold, white and charcoal design. This is an independent platform and is not an official Government of Kenya programme. Replace sample opportunities with real, reviewed listings before launch.
 
@@ -11,7 +11,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Configure Supabase URL, anon key and the server-only service-role key in `.env.local`. For a new Supabase project, run `supabase/schema.sql`. For an existing project that already has the original schema, run `supabase/migrations/20261028_kazimashinani_bonus_withdrawals.sql` in the Supabase SQL Editor. Keep the service-role key and Daraja credentials server-side.
+Configure Supabase URL, anon key and the server-only service-role key in `.env.local`. For a new Supabase project, run `supabase/schema.sql`. For an existing project that already has the original schema, run `supabase/migrations/20261028_kazimtaani_bonus_withdrawals.sql` in the Supabase SQL Editor. Keep the service-role key and Daraja credentials server-side.
 
 ## Phone verification and KES 750 welcome bonus
 
