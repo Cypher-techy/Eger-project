@@ -1,0 +1,24 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArrowRight, BriefcaseBusiness, CircleDollarSign, Clock3, ShieldCheck, WalletCards } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/account");
+
+  const [{ data: profile }, { data: transactions }, { data: submissions }] = await Promise.all([
+    supabase.from("profiles").select("full_name,phone_e164,phone_verified_at").eq("id", user.id).maybeSingle(),
+    supabase.from("wallet_transactions").select("amount_kes,direction,kind,status,withdrawable,description,created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10),
+    supabase.from("task_submissions").select("id,status,created_at,opportunities(title,reward_kes)").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5)
+  ]);
+
+  const available = (transactions || []).reduce((total, tx) => {
+    if (tx.status !== "available" && tx.status !== "completed") return total;
+    if (!tx.withdrawable) return total;
+    return total + (tx.direction === "credit" ? tx.amount_kes : -tx.amount_kes);
+  }, 0);
+
+  return <main className="dash-page"><header className="dash-nav"><Link className="brand" href="/"><span className="brand-icon">K</span><span>Kazi<span className="brand-green">Connect</span><small>KENYA</small></span></Link><div className="dash-nav-right"><span>{profile?.full_name || user.email}</span><form action="/auth/signout" method="post"><button className="signout" type="submit">Sign out</button></form></div></header><div className="dash-wrap"><div className="dash-welcome"><div><div className="eyebrow">YOUR WORKSPACE</div><h1>Good to have you here{profile?.full_name ? `, ${profile.full_name.split(" ")[0]}` : ""}.</h1><p>Explore opportunities and keep an eye on your activity.</p></div><Link className="btn btn-primary" href="/#opportunities">Find opportunities <ArrowRight size={16}/></Link></div><div className="dash-cards"><article><span className="dash-card-icon"><WalletCards size={19}/></span><small>Available cash balance</small><strong>KSh {available.toLocaleString("en-KE", {minimumFractionDigits:2,maximumFractionDigits:2})}</strong><p>Only eligible, withdrawable ledger entries count here.</p></article><article><span className="dash-card-icon yellow"><BriefcaseBusiness size={19}/></span><small>My applications</small><strong>{(submissions || []).length}</strong><p>Recent submissions and their review status.</p></article><article><span className="dash-card-icon purple"><ShieldCheck size={19}/></span><small>Phone status</small><strong>{profile?.phone_verified_at ? "Verified" : "Not verified"}</strong><p>{profile?.phone_verified_at ? "Your phone verification is recorded." : "Verification will be available when payment services are configured."}</p></article></div><div className="dash-columns"><section className="dash-panel"><div className="dash-panel-head"><div><h2>Recent applications</h2><p>Follow up on tasks you have submitted.</p></div><BriefcaseBusiness size={19}/></div>{(submissions || []).length ? <div className="dash-list">{(submissions || []).map((item:any)=><div className="dash-list-row" key={item.id}><div><strong>{item.opportunities?.title || "Opportunity"}</strong><small>{new Date(item.created_at).toLocaleDateString("en-KE")}</small></div><span className={`state-pill state-${item.status}`}>{item.status}</span></div>)}</div> : <div className="empty-state"><span><BriefcaseBusiness size={22}/></span><strong>No applications yet</strong><p>Browse available opportunities and apply when you find a good fit.</p><Link href="/#opportunities" className="text-link">Explore opportunities <ArrowRight size={15}/></Link></div>}</section><section className="dash-panel"><div className="dash-panel-head"><div><h2>Wallet activity</h2><p>Your latest ledger entries.</p></div><CircleDollarSign size={19}/></div>{(transactions || []).length ? <div className="dash-list">{(transactions || []).map((tx:any,i:number)=><div className="dash-list-row" key={i}><div><strong>{tx.description}</strong><small><Clock3 size={12}/> {new Date(tx.created_at).toLocaleDateString("en-KE")} · {tx.status}</small></div><b className={tx.direction === "credit" ? "amount-plus" : "amount-minus"}>{tx.direction === "credit" ? "+" : "−"}KSh {tx.amount_kes.toLocaleString("en-KE")}</b></div>)}</div> : <div className="empty-state"><span><WalletCards size={22}/></span><strong>No wallet transactions</strong><p>Approved earnings will appear here after the ledger is configured.</p></div>}</section></div><div className="dash-disclaimer"><ShieldCheck size={16}/><span>Promotional credit is not guaranteed cash. Your available balance includes only ledger entries marked available or completed and explicitly withdrawable.</span></div></div></main>;
+}
