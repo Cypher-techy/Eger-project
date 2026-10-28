@@ -1,6 +1,6 @@
-# KaziConnect Kenya
+# KaziMashinani Jobs
 
-A Next.js + Supabase starter for a Kenyan online-opportunities platform. The landing page is a design prototype; sample tasks are clearly labelled as examples and must be replaced with reviewed, real opportunities before launch.
+A mobile-first Next.js + Supabase opportunities platform with a gold, white and charcoal design. This is an independent platform and is not an official Government of Kenya programme. Replace sample opportunities with real, reviewed listings before launch.
 
 ## Run locally
 
@@ -11,28 +11,27 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Configure Supabase URL, anon key and the server-only service-role key in `.env.local`. Apply `supabase/schema.sql` in the Supabase SQL Editor before enabling account, wallet or payment routes. Use a fresh Supabase project or review existing objects before applying the schema.
+Configure Supabase URL, anon key and the server-only service-role key in `.env.local`. For a new Supabase project, run `supabase/schema.sql`. For an existing project that already has the original schema, run `supabase/migrations/20261028_kazimashinani_bonus_withdrawals.sql` in the Supabase SQL Editor. Keep the service-role key and Daraja credentials server-side.
 
-## Daraja STK Push
+## Phone verification and KES 750 welcome bonus
 
-KaziConnect reuses the same Daraja request flow, environment-variable conventions, phone normalization and public endpoint paths from the working parent-repository endpoints `api/stkpush.js` and `api/callback.js`:
+- `POST /api/verify` initiates the KSh 70 Daraja STK Push using `CustomerBuyGoodsOnline`; configure `MPESA_PARTY_B` with your approved Buy Goods till.
+- `POST /api/callback` finds the matching payment and independently queries Safaricom before accepting a successful payment.
+- The callback validates ResultCode, the KSh 70 amount, payer phone and receipt before calling the atomic `confirm_phone_verification` SQL function.
+- The SQL function marks the account phone-verified and credits the KES 750 welcome bonus once, using a unique ledger reference. The credit is withdrawable only when `platform_settings.welcome_promotion` has `funded=true` and `enabled=true`.
+- The schema/migration currently sets the promotion as funded because the project owner confirmed that payout funds are reserved. Keep `funded=true` only while at least KES 750 per eligible new user is actually reserved. If that reserve is not available, set it to false before accepting payments.
+- An accepted STK request is not proof of payment. The dashboard polls `GET /api/verification-status` and refreshes only after server-side verification is confirmed.
 
-- `POST /api/stkpush` — requires an authenticated account, a valid Kenyan number and explicit consent to the KSh 70 fee.
-- `POST /api/callback` — keeps the callback path compatible with the existing endpoint configuration and looks up the stored payment by its CheckoutRequestID.
-- Set `MPESA_CALLBACK_URL=https://YOUR_DEPLOYED_DOMAIN/api/callback`. The callback must be public HTTPS; localhost cannot receive Safaricom callbacks.
-- `MPESA_*` names take precedence; legacy `DARAJA_*` credentials remain supported as fallbacks, matching the original endpoint.
-- The new flow charges KSh 70, not the original Relief Hub endpoint's KSh 50.
-- The callback does not trust the callback body alone. It calls Safaricom STK Query, checks the amount, payer phone and receipt, then calls the atomic `confirm_phone_verification` database function. Phone verification is not marked successful when confirmation is uncertain.
-- The service-role key and Daraja credentials must remain server-side.
+## Withdrawals
 
-## Important payment and wallet rules
+- The dashboard shows the available withdrawable ledger balance and a **Withdraw to M-Pesa** request form.
+- `POST /api/withdraw` requires an authenticated account, verified phone and sufficient available balance. The database function serializes withdrawal requests per user and prevents simultaneous requests from exceeding the ledger balance.
+- Withdrawal requests are **not live M-Pesa payouts yet**. They remain pending admin review. Actual payout requires Safaricom B2C credentials, an adequately funded business account, admin authorization, idempotency, and B2C result/timeout callback handling. The interface never claims a request is a completed payout.
 
-- A successful STK prompt response means only that Safaricom accepted the request. It is not proof that payment succeeded.
-- The KSh 750 welcome offer remains non-withdrawable unless it is funded and enabled through a properly audited process. Do not describe it as guaranteed cash if it is not funded.
-- Do not award earnings for placeholder tasks. Publish only real, reviewed opportunities with accurate reward terms.
-- The current changes implement phone verification collection, but have not been run through a full Daraja sandbox callback test from this environment. Verify the complete flow in sandbox before using production credentials.
-- Real withdrawals still require Safaricom B2C access, production credentials, sufficient prefunded balance, admin authorization, duplicate-request protection, and result/timeout callback handling. Withdrawal processing is not implemented as live B2C yet.
+## Security and launch checklist
 
-## Current status
-
-This branch contains the new Next.js landing page, Supabase account registration/sign-in, account dashboard, wallet/opportunity schema, and the STK Push phone-verification routes. The code has been committed to the feature branch and is not merged into `main`. A local production build and end-to-end payment test have not been run here.
+- Keep Supabase service-role and Daraja credentials in server-only environment variables.
+- Test the complete flow in Safaricom sandbox before production use.
+- The promotion should be funded and its terms visible before a user pays.
+- Replace illustrative task cards with genuine opportunities and verified reward terms.
+- Do not claim government affiliation without authorization or promise earnings from sample listings.
