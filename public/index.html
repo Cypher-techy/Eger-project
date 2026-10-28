@@ -1,390 +1,53 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Relief Fund | Application</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #006A3D; /* Egerton Green */
-            --secondary: #FFD700; /* Gold/Yellow for highlights */
-            --bg: #f0f2f5;
-            --card-bg: #ffffff;
-            --text-main: #333;
-            --text-light: #666;
-            --border: #e1e4e8;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-main);
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            width: 50px;
-            height: 50px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 106, 61, 0.2);
-        }
-
-        .header h2 {
-            margin: 10px 0 5px;
-            font-size: 1.2rem;
-            color: var(--text-main);
-        }
-
-        .status-bar {
-            background: #e6fffa;
-            color: #006A3D;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border: 1px solid #b2f5ea;
-        }
-
-        .timer {
-            font-weight: bold;
-            color: #d32f2f;
-        }
-
-        /* Main Card */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            padding: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .amount-box {
-            background: linear-gradient(135deg, #006A3D 0%, #004d2c 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .amount-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-
-        .amount-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .disbursement-info {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .highlight {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text-main);
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: all 0.2s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 106, 61, 0.1);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: #004d2c;
-        }
-
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* OTP Section (Hidden initially) */
-        .otp-section {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .otp-input {
-            letter-spacing: 5px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        /* Progress Steps */
-        .steps-container {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-
-        .step-item.active { color: var(--text-main); }
-        .step-item.done { color: var(--primary); }
-
-        .step-icon {
-            width: 24px;
-            text-align: center;
-        }
-
-        /* Social Proof Ticker */
-        .ticker-wrapper {
-            margin-top: 20px;
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            height: 60px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .ticker-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            border-bottom: 1px dashed #eee;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .ticker-row span:last-child {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #999;
-            margin-top: 20px;
-        }
-
-        /* Loader */
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123c2b">
+<title>Kazi Mtaani Jobs | Find work. Move forward.</title>
+<meta name="description" content="An independent Kenyan opportunities board for discovering work and tracking phone-verification payment status transparently.">
+<style>
+:root{--ink:#15261e;--muted:#66756d;--green:#176b48;--green2:#b7f36b;--cream:#f6f8f2;--line:#e3e9e1;--white:#fff;--amber:#fff3d5;--shadow:0 18px 60px #102a1c12}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit;text-decoration:none}button,input{font:inherit}.wrap{width:min(1160px,calc(100% - 40px));margin:auto}.notice{background:#153c2b;color:#e9f6ec;font-size:12px}.notice .wrap{display:flex;justify-content:space-between;gap:14px;padding:10px 0}.notice strong{color:var(--green2);font-weight:700}.nav{height:82px;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:20px;letter-spacing:-.7px}.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--green);color:#fff;font-size:22px;font-weight:900}.brand em{font-style:normal;color:var(--green)}.brand small{display:block;font-size:9px;letter-spacing:2.4px;color:var(--muted);font-weight:800;line-height:1.2}.navlinks{display:flex;gap:27px;color:#526158;font-size:13px;font-weight:650}.navlinks a:hover{color:var(--green)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 19px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:750;font-size:13px;cursor:pointer;box-shadow:0 8px 18px #176b4820;transition:transform .2s,background .2s}.btn:hover{background:#105639;transform:translateY(-1px)}.btn:disabled{opacity:.6;cursor:wait;transform:none}.btn-outline{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}.hero{position:relative;overflow:hidden;padding:66px 0 72px;background:radial-gradient(ellipse at 78% 22%,#d9efc6 0,transparent 35%),linear-gradient(130deg,#f8faf5,#edf4e8)}.hero:after{content:"";position:absolute;width:430px;height:430px;border:1px solid #c9ddc2;border-radius:50%;right:-100px;top:40px;box-shadow:0 0 0 35px #d8e8d42c,0 0 0 75px #d8e8d41b;pointer-events:none}.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:50px;align-items:center;position:relative;z-index:1}.eyebrow{display:inline-flex;align-items:center;gap:9px;text-transform:uppercase;font-size:10px;letter-spacing:1.7px;font-weight:850;color:var(--green)}.eyedot{width:7px;height:7px;background:#78bd48;border-radius:50%;box-shadow:0 0 0 4px #78bd4822}.hero h1{font-size:clamp(42px,5.5vw,68px);line-height:1.02;letter-spacing:-3.5px;margin:18px 0 20px;max-width:620px}.hero h1 span{color:var(--green)}.lead{font-size:17px;line-height:1.8;color:#58675e;max-width:540px;margin:0 0 27px}.hero-actions{display:flex;gap:12px;flex-wrap:wrap}.trust{display:flex;align-items:center;gap:13px;margin-top:31px;color:#647269;font-size:12px}.trust-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e0edda;color:var(--green);font-size:17px}.trust b{display:block;color:var(--ink);font-size:12px}.preview{background:#fff;border:1px solid #e5ece1;border-radius:25px;padding:24px;box-shadow:0 28px 70px #24452c16;position:relative}.preview-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:21px}.preview-head h3{font-size:16px;margin:0;letter-spacing:-.3px}.preview-head small{display:block;color:var(--muted);font-size:11px}.pill{background:#edf7e9;color:#2c6d3d;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:800;white-space:nowrap}.metric{background:#173f2d;color:white;border-radius:18px;padding:21px;position:relative;overflow:hidden}.metric:after{content:"";position:absolute;width:160px;height:160px;border:1px solid #ffffff22;border-radius:50%;right:-40px;top:-90px;box-shadow:0 0 0 24px #ffffff08,0 0 0 50px #ffffff06}.metric small{color:#c1d8c7;font-size:11px}.metric strong{display:block;font-size:31px;letter-spacing:-1.1px;margin:7px 0}.metric p{margin:0;color:#d8e8dc;font-size:11px}.metric-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ffffff24;margin-top:17px;padding-top:13px;color:#d8e8dc;font-size:11px}.tiny-status{background:#fff1c9;color:#795817;border-radius:7px;padding:4px 8px;font-size:10px;font-weight:800}.preview-list{display:grid;gap:11px;margin-top:15px}.preview-row{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:13px;padding:12px}.row-icon{display:grid;place-items:center;width:39px;height:39px;flex:none;border-radius:11px;background:#eef5e9;color:var(--green);font-weight:900}.preview-row strong{display:block;font-size:12px}.preview-row small{display:block;font-size:10px;color:var(--muted)}.row-end{margin-left:auto;text-align:right;font-size:12px;font-weight:850}.row-end small{font-weight:500}.section{padding:76px 0}.section-head{max-width:640px;margin:0 auto 35px;text-align:center}.section-head .eyebrow{justify-content:center}.section-head h2{font-size:clamp(29px,4vw,42px);letter-spacing:-1.8px;line-height:1.15;margin:13px 0}.section-head p{color:var(--muted);margin:0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.step,.job-card,.verify-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}.step-number{width:40px;height:40px;border-radius:13px;background:#e8f3e1;color:var(--green);display:grid;place-items:center;font-weight:900}.step h3{margin:18px 0 7px;font-size:17px}.step p{margin:0;color:var(--muted);font-size:13px}.jobs-section{background:#eef3e9}.job-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px}.job-card{padding:22px}.job-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.job-type{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--green);font-weight:850}.demo-tag{font-size:9px;background:#fff0d1;color:#7b5b18;padding:4px 7px;border-radius:5px;font-weight:800}.job-card h3{font-size:17px;line-height:1.35;margin:17px 0 8px}.job-card p{font-size:12px;color:var(--muted);margin:0 0 20px}.job-foot{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}.job-foot b{color:var(--ink)}.demo-note{margin:20px auto 0;text-align:center;font-size:11px;color:#69776d}.verify-section{background:#153c2b;color:#fff}.verify-grid{display:grid;grid-template-columns:1fr .9fr;gap:55px;align-items:center}.verify-copy .eyebrow{color:var(--green2)}.verify-copy h2{font-size:clamp(32px,4vw,46px);line-height:1.1;letter-spacing:-1.8px;margin:14px 0}.verify-copy p{color:#c9d9ce;max-width:500px}.verify-points{display:grid;gap:13px;margin-top:25px;color:#e0ece3;font-size:13px}.verify-points span{display:flex;gap:10px;align-items:center}.verify-points b{color:var(--green2)}.verify-card{color:var(--ink);padding:27px}.verify-card h3{font-size:20px;letter-spacing:-.5px;margin:0 0 5px}.verify-card>p{font-size:12px;color:var(--muted);margin:0 0 20px}.field-label{display:block;font-size:12px;font-weight:800;margin-bottom:7px}.field{width:100%;border:1px solid #dce5dc;border-radius:11px;padding:13px 14px;outline:none;background:#fcfdfb}.field:focus{border-color:var(--green);box-shadow:0 0 0 3px #176b4817}.consent{display:flex;align-items:flex-start;gap:9px;margin:14px 0;font-size:11px;line-height:1.55;color:#59665e}.consent input{margin-top:3px;accent-color:var(--green)}.verify-card .btn{width:100%}.status-box{display:none;margin-top:14px;border-radius:11px;padding:13px;font-size:12px;line-height:1.55}.status-box.pending{display:block;background:#fff3d5;color:#735317;border:1px solid #f2dfa8}.status-box.error{display:block;background:#fff0ed;color:#9b3428;border:1px solid #f2cbc3}.status-box.success{display:block;background:#e8f7e9;color:#235e31;border:1px solid #c5e8c9}.fee-note{font-size:10px;color:#7a857c;margin-top:13px}.faq{display:grid;grid-template-columns:1fr 1fr;gap:16px}.faq article{padding:20px;border:1px solid var(--line);border-radius:15px;background:#fff}.faq h3{margin:0 0 7px;font-size:14px}.faq p{margin:0;font-size:12px;color:var(--muted)}.disclaimer{background:#fff6df;border:1px solid #f0dfb2;border-radius:13px;padding:15px 17px;color:#6f581f;font-size:11px;line-height:1.65;margin-top:27px}.footer{background:#102e21;color:#c8d8cd;padding:34px 0}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px}.footer .brand{color:white}.footer p{font-size:11px;margin:7px 0 0;color:#a7bdb0}.footer small{font-size:10px}.footer-links{font-size:11px;display:flex;gap:17px;flex-wrap:wrap}
+@media(max-width:850px){.navlinks{display:none}.hero-grid,.verify-grid{grid-template-columns:1fr;gap:34px}.hero{padding:50px 0}.hero h1{letter-spacing:-2.5px}.hero:after{right:-230px}.preview{max-width:550px}.steps,.job-grid{grid-template-columns:1fr 1fr}.verify-grid{gap:25px}.verify-copy h2{max-width:600px}}
+@media(max-width:560px){.wrap{width:min(100% - 28px,1160px)}.notice .wrap{font-size:10px;flex-wrap:wrap}.nav{height:70px}.brand{font-size:17px}.mark{width:37px;height:37px}.nav>.btn{padding:10px 12px;font-size:11px}.hero{padding:43px 0 52px}.hero h1{font-size:44px}.lead{font-size:15px}.hero-actions .btn{width:100%}.preview{padding:15px}.metric{padding:17px}.section{padding:55px 0}.steps,.job-grid,.faq{grid-template-columns:1fr}.step,.job-card{padding:19px}.verify-card{padding:20px}.footer-inner{align-items:flex-start;flex-direction:column}.footer-links{gap:12px}}
+</style>
 </head>
 <body>
-
-    <div class="app-container">
-        <div class="header">
-            <div class="logo">E</div>
-            <h2>Student Relief Fund</h2>
-        </div>
-
-        <div class="card">
-            <div class="disbursement-info">
-                <p>Submit your details for review. Submitting this form does not confirm approval or a payment.</p>
-            </div>
-
-            <!-- Initial Form -->
-            <form id="mainForm">
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="fullName" placeholder="John Kamau Mwangi" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Registration Number</label>
-                    <!-- Regex: Letter + 2 Numbers / Numbers / Year -->
-                    <input type="text" id="regNumber" placeholder="e.g. A12/56789/20" pattern="[A-Za-z]\d{2}/\d+/\d{2}" required>
-                </div>
-
-                <div class="form-group">
-                    <label>M-Pesa Phone Number</label>
-                    <input type="tel" id="phoneNumber" placeholder="0712 345 678" required maxlength="10">
-                </div>
-
-                <button type="submit" class="btn-primary" id="verifyBtn">
-                    <span id="btnText">Submit application</span>
-                    <div class="spinner" id="btnSpinner"></div>
-                </button>
-            </form>
-
-            <p id="formMessage" role="status" aria-live="polite"></p>
-            <section id="paymentSection" hidden aria-labelledby="paymentHeading">
-                <h3 id="paymentHeading">Optional M-Pesa payment</h3>
-                <p>Send a request to pay KES 50 from your M-Pesa account. This is a charge, not a grant disbursement. Submitting an application does not require this payment.</p>
-                <form id="paymentForm">
-                    <div class="form-group">
-                        <label for="paymentPhone">M-Pesa phone number to charge</label>
-                        <input type="tel" id="paymentPhone" autocomplete="tel" required>
-                    </div>
-                    <button type="submit" class="btn-primary" id="paymentBtn">Request KES 50 M-Pesa payment</button>
-                </form>
-                <p id="paymentMessage" role="status" aria-live="polite"></p>
-            </section>
-        </div>
-        <div class="footer"><p>Student Relief Fund application</p></div>
-    </div>
-
-    <script>
-        const form = document.getElementById('mainForm');
-        const button = document.getElementById('verifyBtn');
-        const message = document.getElementById('formMessage');
-        const paymentSection = document.getElementById('paymentSection');
-        const paymentForm = document.getElementById('paymentForm');
-        const paymentPhone = document.getElementById('paymentPhone');
-        const paymentButton = document.getElementById('paymentBtn');
-        const paymentMessage = document.getElementById('paymentMessage');
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            button.disabled = true;
-            message.textContent = 'Submitting application…';
-            const submittedPhone = document.getElementById('phoneNumber').value;
-            try {
-                const response = await fetch('/api/apply', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fullName: document.getElementById('fullName').value,
-                        regNumber: document.getElementById('regNumber').value,
-                        phone: document.getElementById('phoneNumber').value
-                    })
-                });
-                let data;
-                try { data = await response.json(); } catch (_) { data = {}; }
-                if (!response.ok || data.status !== 'success') {
-                    throw new Error(data.message || `Application request failed (HTTP ${response.status}).`);
-                }
-                message.textContent = data.message || 'Application submitted for review.';
-                form.reset();
-                paymentPhone.value = submittedPhone;
-                paymentSection.hidden = false;
-                paymentButton.disabled = false;
-                paymentMessage.textContent = '';
-            } catch (error) {
-                message.textContent = error.message || 'Connection issue. Please try again.';
-            } finally {
-                button.disabled = false;
-            }
-        });
-        paymentForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            paymentButton.disabled = true;
-            paymentMessage.textContent = 'Requesting an M-Pesa prompt…';
-            try {
-                const response = await fetch('/api/stkpush', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone: paymentPhone.value })
-                });
-                let data;
-                try { data = await response.json(); } catch (_) { data = {}; }
-                if (!response.ok || data.status !== 'success') {
-                    throw new Error(data.message || `Payment request failed (HTTP ${response.status}).`);
-                }
-                paymentMessage.textContent = 'Payment prompt accepted. Check your phone; payment is not yet confirmed. Reference: ' + data.checkoutRequestId;
-            } catch (error) {
-                paymentMessage.textContent = (error.message || 'Connection issue.') + ' Check your phone before trying again; a prompt may still arrive.';
-                paymentButton.disabled = false;
-            }
-        });
-    </script>
-</body>
-</html>
+<div class="notice"><div class="wrap"><span><strong>KENYA OPPORTUNITIES BOARD</strong> &nbsp;•&nbsp; Clear terms. Transparent status.</span><span>Independent platform · Not a government service</span></div></div>
+<header class="wrap nav">
+<a class="brand" href="#" aria-label="Kazi Mtaani Jobs home"><span class="mark">K</span><span>Kazi Mtaani <em>Jobs</em><small>OPPORTUNITIES IN KENYA</small></span></a>
+<nav class="navlinks" aria-label="Main navigation"><a href="#how">How it works</a><a href="#opportunities">Opportunities</a><a href="#verification">Phone verification</a><a href="#faq">FAQs</a></nav>
+<a class="btn" href="#verification">Get started <span aria-hidden="true">↗</span></a>
+</header>
+<main>
+<section class="hero"><div class="wrap hero-grid">
+<div><div class="eyebrow"><span class="eyedot"></span> YOUR NEXT STEP STARTS HERE</div><h1>Find opportunities.<br><span>Move forward.</span></h1><p class="lead">Explore work opportunities, understand the requirements before you apply, and keep your application and payment status in one place.</p><div class="hero-actions"><a class="btn" href="#opportunities">Explore opportunities <span>→</span></a><a class="btn btn-outline" href="#how">See how it works</a></div><div class="trust"><span class="trust-icon">✓</span><div><b>Clarity at every step</b><span>Fees and payment status are shown before you proceed.</span></div></div></div>
+<div class="preview"><div class="preview-head"><div><h3>Your opportunity dashboard</h3><small>A preview of the experience</small></div><span class="pill">DESIGN PREVIEW</span></div><div class="metric"><small>Phone verification status</small><strong>Not verified yet</strong><p>Your status updates only after payment confirmation is received.</p><div class="metric-bottom"><span>Payment status</span><span class="tiny-status">Pending confirmation</span></div></div><div class="preview-list"><div class="preview-row"><span class="row-icon">01</span><div><strong>Review opportunity details</strong><small>Check duties, eligibility and terms</small></div><span class="row-end">→</span></div><div class="preview-row"><span class="row-icon">02</span><div><strong>Submit an application</strong><small>Follow the employer's instructions</small></div><span class="row-end">→</span></div><div class="preview-row"><span class="row-icon">03</span><div><strong>Track your status</strong><small>Pending · Confirmed · Failed</small></div><span class="row-end">→</span></div></div></div>
+</div></section>
+<section class="section" id="how"><div class="wrap"><div class="section-head"><div class="eyebrow">A SIMPLE PROCESS</div><h2>Know what happens next.</h2><p>Review details first. Keep a record of your steps. Never rely on a payment prompt as proof of a successful transaction.</p></div><div class="steps"><article class="step"><div class="step-number">01</div><h3>Explore opportunities</h3><p>Read each listing carefully, including the employer, duties, eligibility, deadline and payment terms.</p></article><article class="step"><div class="step-number">02</div><h3>Complete verification</h3><p>If you choose phone verification, the displayed fee is KSh 50. You will be asked to confirm through M-Pesa.</p></article><article class="step"><div class="step-number">03</div><h3>Wait for confirmation</h3><p>Your payment stays pending until the Safaricom callback is received. A sent STK prompt is not proof of payment.</p></article></div></div></section>
+<section class="section jobs-section" id="opportunities"><div class="wrap"><div class="section-head"><div class="eyebrow">OPPORTUNITY BOARD</div><h2>Discover work that fits your next step.</h2><p>Listing details should always be reviewed before applying. The cards below are examples of the information a real listing should contain, not live job vacancies.</p></div><div class="job-grid"><article class="job-card"><div class="job-top"><span class="job-type">Digital work</span><span class="demo-tag">EXAMPLE</span></div><h3>Online data and content support</h3><p>Example listing format for describing the tasks, required skills, expected time and how a verified employer pays workers.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article><article class="job-card"><div class="job-top"><span class="job-type">Research</span><span class="demo-tag">EXAMPLE</span></div><h3>Survey and research assistant</h3><p>Example listing format showing eligibility, location, deadline and whether the task is remote or in person.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article><article class="job-card"><div class="job-top"><span class="job-type">Entry-level</span><span class="demo-tag">EXAMPLE</span></div><h3>Customer support assistant</h3><p>Example listing format for the responsibilities, working hours, contact details and application steps.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article></div><p class="demo-note">Live opportunities should only be published after the employer and listing details have been checked.</p></div></section>
+<section class="section verify-section" id="verification"><div class="wrap verify-grid"><div class="verify-copy"><div class="eyebrow"><span class="eyedot"></span> PHONE VERIFICATION</div><h2>A clear payment process, from prompt to confirmation.</h2><p>Use your Kenyan mobile number to request an M-Pesa STK Push. The verification charge is KSh 50 on this version of the platform.</p><div class="verify-points"><span><b>✓</b> The amount is shown before you continue.</span><span><b>✓</b> Your status begins as pending.</span><span><b>✓</b> An STK prompt does not guarantee a job or income.</span></div></div><div class="verify-card"><h3>Verify your phone number</h3><p>Enter the number that should receive the M-Pesa prompt.</p><form id="verify-form"><label class="field-label" for="phone">M-Pesa phone number</label><input class="field" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0712 345 678" required pattern="(?:\+254|254|0)[17][0-9]{8}"><label class="consent"><input id="consent" type="checkbox" required><span>I understand that the phone-verification fee is KSh 50. Paying it does not guarantee employment, selection, a grant or earnings.</span></label><button class="btn" id="pay-btn" type="submit">Request M-Pesa prompt <span>→</span></button><div id="payment-status" class="status-box" role="status" aria-live="polite"></div><p class="fee-note">Only proceed if you understand and accept the fee. Never share your M-Pesa PIN with anyone.</p></form></div></div></section>
+<section class="section" id="faq"><div class="wrap"><div class="section-head"><div class="eyebrow">GOOD TO KNOW</div><h2>Frequently asked questions</h2></div><div class="faq"><article><h3>Does phone verification guarantee a job?</h3><p>No. Verification only concerns the phone number and payment status. It does not guarantee selection, income or an offer of work.</p></article><article><h3>Why does my payment say pending?</h3><p>It remains pending while the system waits for Safaricom's callback. A successful prompt request alone is not a completed payment.</p></article><article><h3>Is this the official government Kazi Mtaani programme?</h3><p>No. This is an independent opportunities-platform design and is not represented as an official Kenyan government service.</p></article><article><h3>How can I assess a listing?</h3><p>Look for a verifiable employer, clear responsibilities, accurate compensation, deadlines and official contact details. Do not pay an employer to secure a job.</p></article></div><div class="disclaimer"><strong>Important:</strong> Kazi Mtaani Jobs is an independent platform and is not affiliated with or endorsed by the Government of Kenya. Sample listings on this page are illustrative, not live vacancies. The KSh 50 phone-verification charge does not guarantee a job or earnings. Do not proceed unless the fee and purpose are clear to you.</div></div></section>
+</main>
+<footer class="footer"><div class="wrap footer-inner"><div><a class="brand" href="#"><span class="mark">K</span><span>Kazi Mtaani <em>Jobs</em><small>OPPORTUNITIES IN KENYA</small></span></a><p>Clear information. Transparent status. Better decisions.</p></div><div class="footer-links"><a href="#how">How it works</a><a href="#opportunities">Opportunities</a><a href="#verification">Verification</a><a href="#faq">FAQs</a></div><small>© <span id="year"></span> Kazi Mtaani Jobs. Independent platform.</small></div></footer>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+const form=document.getElementById('verify-form');
+const button=document.getElementById('pay-btn');
+const statusBox=document.getElementById('payment-status');
+function showStatus(kind,text){statusBox.className='status-box '+kind;statusBox.textContent=text;}
+form.addEventListener('submit',async function(event){
+ event.preventDefault();
+ if(!document.getElementById('consent').checked){showStatus('error','Please confirm that you understand the KSh 50 fee.');return;}
+ button.disabled=true;button.textContent='Requesting M-Pesa prompt…';statusBox.className='status-box';statusBox.textContent='';
+ try{
+  const response=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:document.getElementById('phone').value.trim()})});
+  const data=await response.json();
+  if(!response.ok||data.status!=='success')throw new Error(data.message||'Could not start the M-Pesa request.');
+  showStatus('pending','PAYMENT PENDING — Safaricom accepted the request. Check your phone and complete the M-Pesa prompt if you wish to continue. This status is not confirmation that payment succeeded. Keep this page open and wait for the payment result to be confirmed.');
+  button.textContent='M-Pesa request sent';
+ }catch(error){showStatus('error',error instanceof Error?error.message:'Unable to start payment. Please try again later.');button.disabled=false;button.textContent='Request M-Pesa prompt →';}
+});
+</script>
+</body></html>
