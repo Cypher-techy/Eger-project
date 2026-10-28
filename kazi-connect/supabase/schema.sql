@@ -86,7 +86,7 @@ create table if not exists public.platform_settings (
 
 -- Promotions start as non-withdrawable. Only an administrator may enable a funded promotion.
 insert into public.platform_settings(key,value)
-values ('welcome_promotion', jsonb_build_object('amount_kes',750,'funded',false,'enabled',true))
+values ('welcome_promotion', jsonb_build_object('amount_kes',750,'funded',true,'enabled',true))
 on conflict (key) do nothing;
 
 alter table public.profiles enable row level security;
@@ -123,8 +123,8 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
 for each row execute procedure public.handle_new_user();
 
--- Intentionally no automatic KSh 750 cash credit is created by this schema.
--- Implement an audited, idempotent promotion-claim function only after funds are reserved.
+-- The welcome bonus is credited only after a Safaricom-confirmed verification payment.
+-- Keep funded=true only while the full promotional payout reserve is actually available.
 
 -- Atomic confirmation prevents a payment from being marked confirmed if profile verification fails.
 -- Call this only after the server has independently queried Safaricom and validated amount/phone/receipt.
@@ -140,6 +140,8 @@ set search_path = public
 as $$
 declare
   payment_row public.mpesa_payments%rowtype;
+  promotion_row public.platform_settings%rowtype;
+  bonus_amount integer;
 begin
   select * into payment_row
   from public.mpesa_payments
@@ -180,9 +182,81 @@ begin
       confirmed_at = now()
   where id = payment_row.id;
 
+  -- Lock the promotion setting and credit at most once per account.
+  select * into promotion_row
+  from public.platform_settings
+  where key = 'welcome_promotion'
+  for update;
+
+  if found
+     and coalesce((promotion_row.value->>'enabled')::boolean, false)
+     and coalesce((promotion_row.value->>'funded')::boolean, false) then
+    bonus_amount := coalesce((promotion_row.value->>'amount_kes')::integer, 750);
+    if bonus_amount = 750 then
+      insert into public.wallet_transactions(
+        user_id, amount_kes, direction, kind, status, withdrawable, reference, description
+      ) values (
+        payment_row.user_id, 750, 'credit', 'promotion', 'available', true,
+        'welcome-bonus:' || payment_row.user_id::text,
+        'KaziMashinani Jobs welcome bonus'
+      ) on conflict (reference) do nothing;
+    end if;
+  end if;
+
   return 'confirmed';
 end;
 $$;
 
 revoke all on function public.confirm_phone_verification(text,text,jsonb) from public, anon, authenticated;
 grant execute on function public.confirm_phone_verification(text,text,jsonb) to service_role;
+
+
+-- Create a withdrawal request only when the authenticated user's withdrawable ledger
+-- balance covers it. Locking the profile serializes simultaneous requests per user.
+create or replace function public.request_withdrawal(
+  p_user_id uuid,
+  p_amount_kes integer
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  profile_row public.profiles%rowtype;
+  ledger_balance bigint;
+  pending_amount bigint;
+  request_id uuid;
+begin
+  if p_amount_kes is null or p_amount_kes < 100 then
+    raise exception 'Minimum withdrawal is KSh 100';
+  end if;
+
+  select * into profile_row from public.profiles where id = p_user_id for update;
+  if not found or profile_row.phone_verified_at is null or profile_row.phone_e164 is null then
+    raise exception 'Verify your phone before requesting a withdrawal';
+  end if;
+
+  select coalesce(sum(case when direction = 'credit' then amount_kes else -amount_kes end),0)
+  into ledger_balance
+  from public.wallet_transactions
+  where user_id = p_user_id and withdrawable = true and status in ('available','completed');
+
+  select coalesce(sum(amount_kes),0) into pending_amount
+  from public.withdrawal_requests
+  where user_id = p_user_id and status in ('requested','approved','processing');
+
+  if p_amount_kes > ledger_balance - pending_amount then
+    raise exception 'Insufficient available balance';
+  end if;
+
+  insert into public.withdrawal_requests(user_id, phone_e164, amount_kes, status)
+  values (p_user_id, profile_row.phone_e164, p_amount_kes, 'requested')
+  returning id into request_id;
+
+  return request_id;
+end;
+$$;
+
+revoke all on function public.request_withdrawal(uuid,integer) from public, anon, authenticated;
+grant execute on function public.request_withdrawal(uuid,integer) to service_role;
