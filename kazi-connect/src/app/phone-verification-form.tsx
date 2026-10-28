@@ -20,7 +20,7 @@ export default function PhoneVerificationForm({ verified }: { verified: boolean 
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Could not start M-Pesa payment.");
-      setMessage("STK Push sent. Enter your M-Pesa PIN, then wait for server-side confirmation. The prompt alone does not verify your phone.");
+      setMessage("STK Push sent. Enter your M-Pesa PIN, then wait for Safaricom confirmation. Only a confirmed KSh 70 payment can verify your phone and trigger the eligible KES 750 welcome bonus.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not start payment. Try again.");
     } finally { setBusy(false); }
@@ -30,9 +30,9 @@ export default function PhoneVerificationForm({ verified }: { verified: boolean 
   return <form className="verify-form" onSubmit={submit}>
     <label htmlFor="verification-phone">M-Pesa phone number</label>
     <input id="verification-phone" value={phone} onChange={e=>setPhone(e.target.value)} inputMode="tel" autoComplete="tel" required placeholder="0712 345 678" />
-    <label className="consent-line"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)} required/> I agree to pay the disclosed KSh 70 phone-verification fee. This is a verification charge, not a job application fee or a guarantee of earnings.</label>
+    <label className="consent-line"><input type="checkbox" checked={consent} onChange={e=>setConsent(e.target.checked)} required/> I agree to pay the disclosed KSh 70 phone-verification fee. After successful payment confirmation, the KES 750 welcome bonus is credited once if the funded promotion is enabled. The verification charge is not a job application fee and does not guarantee employment.</label>
     {error && <p className="form-error" role="alert">{error}</p>}
     {message && <p className="form-success" role="status">{message}</p>}
-    <button className="btn btn-primary verify-submit" disabled={busy || !consent}>{busy ? <LoaderCircle className="spin" size={16}/> : <Smartphone size={16}/>} {busy ? "Requesting STK Push…" : "Pay KSh 70 with M-Pesa"}</button>
+    <button className="btn btn-primary verify-submit" disabled={busy || !consent}>{busy ? <LoaderCircle className="spin" size={16}/> : <Smartphone size={16}/>} {busy ? "Requesting STK Push…" : "Verify & claim KES 750"}</button>
   </form>;
 }
