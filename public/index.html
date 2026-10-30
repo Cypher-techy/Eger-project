@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#176b48">
-<title>KaziMashinaniJobs — Simple online jobs, paid to M-Pesa</title>
-<meta name="description" content="Join KaziMashinaniJobs: get a Sh 500 welcome bonus, complete simple jobs, refer friends and withdraw to M-Pesa.">
+<title>Kazi Mtaani — Local Jobs, Instant Cash</title>
+<meta name="description" content="Join Kazi Mtaani: Get paid for local tasks, surveys, and gigs in your neighborhood. Withdraw directly to M-Pesa instantly.">
 <style>
 :root{
     --ink:#15261e;
@@ -64,223 +64,193 @@ button,input{font:inherit;border:none;background:none}
 /* Cards / Preview */
 .preview{background:#fff;border:1px solid #e5ece1;border-radius:25px;padding:24px;box-shadow:var(--card-shadow);position:relative}
 .preview-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:21px}
-.preview-head h3{font-size:16px;margin:0;letter-spacing:-.3px}
-.preview-head small{display:block;color:var(--muted);font-size:11px}
-.pill{background:#edf7e9;color:#2c6d3d;border-radius:99px;padding:6px 10px;font-size:10px;font-weight:800;white-space:nowrap}
-.metric{background:#173f5c;color:white;border-radius:12px;padding:12px;text-align:center;font-weight:700;font-size:14px}
+.preview-title{font-weight:800;font-size:16px;color:var(--ink)}
+.preview-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-light);color:var(--green)}
 
-/* Features Grid */
-.features-section {padding: 80px 0;}
-.feature-card {background: white; border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); transition: transform 0.2s; height: 100%;}
-.feature-card:hover {transform: translateY(-4px);}
-.feature-icon {width: 48px; height: 48px; background: var(--green-light); border-radius: 12px; display: grid; place-items: center; margin-bottom: 16px; color: var(--green);}
-.feature-title {font-weight: 700; font-size: 18px; margin: 0 0 8px 0;}
-.feature-desc {color: var(--muted); font-size: 14px; margin: 0; line-height: 1.5;}
+/* Job Card Styles */
+.job-list{display:flex;flex-direction:column;gap:16px}
+.job-card{display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid var(--line);border-radius:16px;transition:all .2s;cursor:pointer}
+.job-card:hover{border-color:var(--green);background:var(--green-light)}
+.job-info h3{margin:0 0 4px;font-size:15px;font-weight:700}
+.job-meta{font-size:12px;color:var(--muted);display:flex;gap:12px}
+.job-pay{font-weight:800;color:var(--green);font-size:15px}
 
-/* Jobs Grid */
-.jobs-section {padding: 40px 0 100px;}
-.section-title {font-size: clamp(28px, 4vw, 40px); font-weight: 850; letter-spacing: -1px; margin: 0 0 12px 0; max-width: 600px;}
-.section-sub {color: var(--muted); max-width: 600px; margin: 0 0 40px 0; font-size: 16px;}
-.jobs-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
-.job-card {background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:all .2s}
-.job-card:hover {border-color:var(--green);box-shadow:0 10px 30px #176b4810}
-.job-icon-wrap {width:40px;height:40px;border-radius:10px;background:var(--green-light);display:grid;place-items:center;color:var(--green)}
-.job-name {font-weight:700;font-size:15px}
+/* Sections */
+.section{padding:80px 0}
+.section-header{text-align:center;max-width:600px;margin:0 auto 48px}
+.section-header h2{font-size:32px;font-weight:850;margin:0 0 12px;letter-spacing:-1px}
+.section-header p{margin:0;color:var(--muted)}
+
+/* Steps Grid */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.step-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px;text-align:center;transition:transform .2s}
+.step-card:hover{transform:translateY(-5px);border-color:var(--green)}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:grid;place-items:center;margin:0 auto 16px;font-size:18px}
+.step-card h3{margin:0 0 8px;font-size:18px}
+.step-card p{margin:0;color:var(--muted);font-size:14px}
+
+/* CTA Banner */
+.cta-banner{background:var(--green);color:#fff;border-radius:24px;padding:48px;text-align:center;position:relative;overflow:hidden}
+.cta-banner h2{margin:0 0 16px;font-size:28px}
+.cta-banner p{margin:0 0 24px;opacity:.9}
+.cta-banner .btn{background:#fff;color:var(--green);box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.cta-banner .btn:hover{background:var(--green-light);color:var(--green-dark)}
 
 /* Footer */
-footer{border-top:1px solid var(--line);padding:40px 0;text-align:center;color:var(--muted);font-size:13px}
-.footer-logo img{width:60px;height:60px;object-fit:contain;margin-bottom:12px}
-.footer-brand{font-weight:800;color:var(--ink);font-size:16px;margin-bottom:4px}
+.footer{padding:40px 0;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px}
+.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px}
+.footer-links a:hover{color:var(--green)}
+
+/* Mobile Adjustments */
+@media(max-width:600px){
+    .nav{height:auto;padding:16px 0;flex-direction:column;gap:16px}
+    .navlinks{gap:16px;flex-wrap:wrap;justify-content:center}
+    .hero{padding:40px 0}
+    .job-card{flex-direction:column;align-items:flex-start;gap:12px}
+    .job-pay{align-self:flex-end}
+}
 </style>
-<!-- Lucide Icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
-    <!-- Top Bar -->
-    <div class="notice" style="background:#153c2b;color:#e9f6ec;font-size:12px;padding:8px 0;">
-        <div class="wrap" style="display:flex;justify-content:space-between;gap:14px">
-            <span>🚀 New jobs added weekly. Earn instantly.</span>
-            <strong style="color:var(--green-accent)">Kenya 🇰🇪</strong>
+<!-- Navigation -->
+<header class="wrap nav">
+    <div class="brand">
+        <div class="mark">M</div>
+        <div>
+            <em>Kazi</em>Mtaani<small>LOCAL JOBS</small>
         </div>
     </div>
-
-    <!-- Navbar -->
-    <nav class="nav wrap">
-        <div class="brand">
-            <div class="mark">K</div>
-            <div>
-                kazi<span>mashinani</span>jobs
-                <small>OPPORTUNITIES</small>
-            </div>
-        </div>
-        <div class="navlinks">
-            <a href="#jobs">Jobs</a>
-            <a href="#how-it-works">How it works</a>
-            <a href="/auth" class="btn btn-outline" style="padding:10px 16px">Log in</a>
-        </div>
+    <nav class="navlinks">
+        <a href="#jobs">Nearby Tasks</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#reviews">Reviews</a>
     </nav>
-
-    <!-- Hero -->
-    <section class="hero">
-        <div class="wrap hero-grid">
-            <div>
-                <div class="eyebrow"><span class="eyedot"></span> Verified Opportunities</div>
-                <h1>Kazi rahisi.<br/><span>Pesa halisi.</span></h1>
-                <p class="lead">Complete short online jobs from your phone, earn Sh 100 per level, and withdraw straight to your M-Pesa.</p>
-                
-                <div class="hero-actions">
-                    <a href="/auth?mode=signup" class="btn">Create free account</a>
-                    <a href="/auth" class="btn btn-outline">I have an account</a>
-                </div>
-
-                <div class="trust">
-                    <div class="trust-icon"><i data-lucide="shield-check"></i></div>
-                    <div><b>Sh 500 Bonus</b> for new members<br><span style="font-size:11px">Instant credit to wallet</span></div>
-                </div>
-            </div>
-
-            <!-- Visual Card Representation -->
-            <div class="preview">
-                <div class="preview-head">
-                    <div>
-                        <h3>Your Earnings</h3>
-                        <small>Updated just now</small>
-                    </div>
-                    <div class="pill">Active</div>
-                </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
-                    <div class="metric" style="background:#176b48">KES 500.00</div>
-                    <div class="metric" style="background:#173f5c">Pending: 0</div>
-                </div>
-                <div style="background:#f6f8f2;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center">
-                    <span style="font-size:13px;font-weight:600">Braintest - Level 1</span>
-                    <span style="color:var(--green);font-weight:700;font-size:13px">+ KES 100</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features -->
-    <section class="features-section wrap" id="how-it-works">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px">
-            
-            <div class="feature-card">
-                <div class="feature-icon"><i data-lucide="gift"></i></div>
-                <h3 class="feature-title">Sh 500 Welcome Bonus</h3>
-                <p class="feature-desc">Credited to your balance as soon as you join and verify your number.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i data-lucide="users"></i></div>
-                <h3 class="feature-title">Sh 100 Per Referral</h3>
-                <p class="feature-desc">Share your personal link and earn for every friend who joins and signs up.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon"><i data-lucide="smartphone"></i></div>
-                <h3 class="feature-title">Withdraw to M-Pesa</h3>
-                <p class="feature-desc">Cash out from Sh 2,800 directly to your registered Safaricom number.</p>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Jobs List -->
-    <section class="jobs-section wrap" id="jobs">
-        <h2 class="section-title">Five jobs. Six levels each.</h2>
-        <p class="section-sub">Answer 10 simple questions per level. Level 1 of every job is free; higher levels unlock for Sh 20 via M-Pesa.</p>
-
-        <div class="jobs-grid">
-            <!-- Job 1 -->
-            <div class="job-card">
-                <div class="job-icon-wrap"><i data-lucide="brain"></i></div>
-                <div class="job-name">Braintest</div>
-                <span style="font-size:12px;color:var(--muted)">Level 1/6</span>
-            </div>
-
-            <!-- Job 2 -->
-            <div class="job-card">
-                <div class="job-icon-wrap"><i data-lucide="house"></i></div>
-                <div class="job-name">House Review</div>
-                <span style="font-size:12px;color:var(--muted)">Level 1/6</span>
-            </div>
-
-            <!-- Job 3 -->
-            <div class="job-card">
-                <div class="job-icon-wrap"><i data-lucide="clipboard-list"></i></div>
-                <div class="job-name">Surveys</div>
-                <span style="font-size:12px;color:var(--muted)">Level 1/6</span>
-            </div>
-
-            <!-- Job 4 -->
-            <div class="job-card">
-                <div class="job-icon-wrap"><i data-lucide="message-circle"></i></div>
-                <div class="job-name">Chat Moderator</div>
-                <span style="font-size:12px;color:var(--muted)">Level 1/6</span>
-            </div>
-
-            <!-- Job 5 -->
-            <div class="job-card">
-                <div class="job-icon-wrap"><i data-lucide="graduation-cap"></i></div>
-                <div class="job-name">Online Tutor</div>
-                <span style="font-size:12px;color:var(--muted)">Level 1/6</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="wrap">
-            <div class="footer-logo">
-                 <!-- Using a generic placeholder or the one from original if available, otherwise just text -->
-                 <i data-lucide="users" style="width:40px;height:40px;color:var(--green)"></i>
-            </div>
-            <div class="footer-brand">Together we earn</div>
-            <div style="margin-top:12px">
-                © 2026 KaziMashinaniJobs · kazimashinanijobssupport@gmail.com
-            </div>
-        </div>
-    </footer>
-
-    <script>
-        lucide.createIcons();
-    </script>
-</body>
-</html>r terms. Transparent status.</span><span>Independent platform · Not a government service</span></div></div>
-<header class="wrap nav">
-<a class="brand" href="#" aria-label="KaziMtaaniJobs home"><span class="mark">K</span><span>KaziMtaaniJobs<small>OPPORTUNITIES IN KENYA</small></span></a>
-<nav class="navlinks" aria-label="Main navigation"><a href="#how">How it works</a><a href="#opportunities">Opportunities</a><a href="#verification">Phone verification</a><a href="#faq">FAQs</a></nav>
-<a class="btn" href="#verification">Get started <span aria-hidden="true">↗</span></a>
+    <button class="btn">Log In</button>
 </header>
-<main>
-<section class="hero"><div class="wrap hero-grid">
-<div><div class="eyebrow"><span class="eyedot"></span> YOUR NEXT STEP STARTS HERE</div><h1>Find opportunities.<br><span>Move forward.</span></h1><p class="lead">Explore work opportunities, understand the requirements before you apply, and keep your application and payment status in one place.</p><div class="hero-actions"><a class="btn" href="#opportunities">Explore opportunities <span>→</span></a><a class="btn btn-outline" href="#how">See how it works</a></div><div class="trust"><span class="trust-icon">✓</span><div><b>Clarity at every step</b><span>Fees and payment status are shown before you proceed.</span></div></div></div>
-<div class="preview"><div class="preview-head"><div><h3>Your opportunity dashboard</h3><small>A preview of the experience</small></div><span class="pill">DESIGN PREVIEW</span></div><div class="metric"><small>Phone verification status</small><strong>Not verified yet</strong><p>Your status updates only after payment confirmation is received.</p><div class="metric-bottom"><span>Payment status</span><span class="tiny-status">Pending confirmation</span></div></div><div class="preview-list"><div class="preview-row"><span class="row-icon">01</span><div><strong>Review opportunity details</strong><small>Check duties, eligibility and terms</small></div><span class="row-end">→</span></div><div class="preview-row"><span class="row-icon">02</span><div><strong>Submit an application</strong><small>Follow the employer's instructions</small></div><span class="row-end">→</span></div><div class="preview-row"><span class="row-icon">03</span><div><strong>Track your status</strong><small>Pending · Confirmed · Failed</small></div><span class="row-end">→</span></div></div></div>
-</div></section>
-<section class="section" id="how"><div class="wrap"><div class="section-head"><div class="eyebrow">A SIMPLE PROCESS</div><h2>Know what happens next.</h2><p>Review details first. Keep a record of your steps. Never rely on a payment prompt as proof of a successful transaction.</p></div><div class="steps"><article class="step"><div class="step-number">01</div><h3>Explore opportunities</h3><p>Read each listing carefully, including the employer, duties, eligibility, deadline and payment terms.</p></article><article class="step"><div class="step-number">02</div><h3>Complete verification</h3><p>If you choose phone verification, the displayed fee is KSh 50. You will be asked to confirm through M-Pesa.</p></article><article class="step"><div class="step-number">03</div><h3>Wait for confirmation</h3><p>Your payment stays pending until the Safaricom callback is received. A sent STK prompt is not proof of payment.</p></article></div></div></section>
-<section class="section jobs-section" id="opportunities"><div class="wrap"><div class="section-head"><div class="eyebrow">OPPORTUNITY BOARD</div><h2>Discover work that fits your next step.</h2><p>Listing details should always be reviewed before applying. The cards below are examples of the information a real listing should contain, not live job vacancies.</p></div><div class="job-grid"><article class="job-card"><div class="job-top"><span class="job-type">Digital work</span><span class="demo-tag">EXAMPLE</span></div><h3>Online data and content support</h3><p>Example listing format for describing the tasks, required skills, expected time and how a verified employer pays workers.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article><article class="job-card"><div class="job-top"><span class="job-type">Research</span><span class="demo-tag">EXAMPLE</span></div><h3>Survey and research assistant</h3><p>Example listing format showing eligibility, location, deadline and whether the task is remote or in person.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article><article class="job-card"><div class="job-top"><span class="job-type">Entry-level</span><span class="demo-tag">EXAMPLE</span></div><h3>Customer support assistant</h3><p>Example listing format for the responsibilities, working hours, contact details and application steps.</p><div class="job-foot"><span>Employer: <b>To be verified</b></span><span>Pay: <b>Not published</b></span></div></article></div><p class="demo-note">Live opportunities should only be published after the employer and listing details have been checked.</p></div></section>
-<section class="section verify-section" id="verification"><div class="wrap verify-grid"><div class="verify-copy"><div class="eyebrow"><span class="eyedot"></span> PHONE VERIFICATION</div><h2>A clear payment process, from prompt to confirmation.</h2><p>Use your Kenyan mobile number to request an M-Pesa STK Push. The verification charge is KSh 50 on this version of the platform.</p><div class="verify-points"><span><b>✓</b> The amount is shown before you continue.</span><span><b>✓</b> Your status begins as pending.</span><span><b>✓</b> An STK prompt does not guarantee a job or income.</span></div></div><div class="verify-card"><h3>Verify your phone number</h3><p>Enter the number that should receive the M-Pesa prompt.</p><form id="verify-form"><label class="field-label" for="phone">M-Pesa phone number</label><input class="field" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="0712 345 678" required pattern="(?:\+254|254|0)[17][0-9]{8}"><label class="consent"><input id="consent" type="checkbox" required><span>I understand that the phone-verification fee is KSh 50. Paying it does not guarantee employment, selection, a grant or earnings.</span></label><button class="btn" id="pay-btn" type="submit">Request M-Pesa prompt <span>→</span></button><div id="payment-status" class="status-box" role="status" aria-live="polite"></div><p class="fee-note">Only proceed if you understand and accept the fee. Never share your M-Pesa PIN with anyone.</p></form></div></div></section>
-<section class="section" id="faq"><div class="wrap"><div class="section-head"><div class="eyebrow">GOOD TO KNOW</div><h2>Frequently asked questions</h2></div><div class="faq"><article><h3>Does phone verification guarantee a job?</h3><p>No. Verification only concerns the phone number and payment status. It does not guarantee selection, income or an offer of work.</p></article><article><h3>Why does my payment say pending?</h3><p>It remains pending while the system waits for Safaricom's callback. A successful prompt request alone is not a completed payment.</p></article><article><h3>Is this the official government Kazi Mtaani programme?</h3><p>No. This is an independent opportunities-platform design and is not represented as an official Kenyan government service.</p></article><article><h3>How can I assess a listing?</h3><p>Look for a verifiable employer, clear responsibilities, accurate compensation, deadlines and official contact details. Do not pay an employer to secure a job.</p></article></div><div class="disclaimer"><strong>Important:</strong> KaziMtaaniJobs is an independent platform and is not affiliated with or endorsed by the Government of Kenya. Sample listings on this page are illustrative, not live vacancies. The KSh 50 phone-verification charge does not guarantee a job or earnings. Do not proceed unless the fee and purpose are clear to you.</div></div></section>
-</main>
-<footer class="footer"><div class="wrap footer-inner"><div><a class="brand" href="#"><span class="mark">K</span><span>KaziMtaaniJobs<small>OPPORTUNITIES IN KENYA</small></span></a><p>Clear information. Transparent status. Better decisions.</p></div><div class="footer-links"><a href="#how">How it works</a><a href="#opportunities">Opportunities</a><a href="#verification">Verification</a><a href="#faq">FAQs</a></div><small>© <span id="year"></span> KaziMtaaniJobs. Independent platform.</small></div></footer>
-<script>
-document.getElementById('year').textContent = new Date().getFullYear();
-const form=document.getElementById('verify-form');
-const button=document.getElementById('pay-btn');
-const statusBox=document.getElementById('payment-status');
-function showStatus(kind,text){statusBox.className='status-box '+kind;statusBox.textContent=text;}
-form.addEventListener('submit',async function(event){
- event.preventDefault();
- if(!document.getElementById('consent').checked){showStatus('error','Please confirm that you understand the KSh 50 fee.');return;}
- button.disabled=true;button.textContent='Requesting M-Pesa prompt…';statusBox.className='status-box';statusBox.textContent='';
- try{
-  const response=await fetch('/api/stkpush',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:document.getElementById('phone').value.trim()})});
-  const data=await response.json();
-  if(!response.ok||data.status!=='success')throw new Error(data.message||'Could not start the M-Pesa request.');
-  showStatus('pending','PAYMENT PENDING — Safaricom accepted the request. Check your phone and complete the M-Pesa prompt if you wish to continue. This status is not confirmation that payment succeeded. Keep this page open and wait for the payment result to be confirmed.');
-  button.textContent='M-Pesa request sent';
- }catch(error){showStatus('error',error instanceof Error?error.message:'Unable to start payment. Please try again later.');button.disabled=false;button.textContent='Request M-Pesa prompt →';}
-});
-</script>
-</body></html>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="wrap hero-grid">
+        <div class="hero-content">
+            <div class="eyebrow"><span class="eyedot"></span> Your Neighborhood</div>
+            <h1>Jobs around<br><span>your corner.</span><br>Paid to M-Pesa.</h1>
+            <p class="lead">Find simple gigs, surveys, and micro-tasks in your immediate area. No commute, no stress. Just tap, work, and get paid instantly to your phone.</p>
+            
+            <div class="hero-actions">
+                <button class="btn">Find Jobs Near Me</button>
+                <button class="btn btn-outline">See Recent Payouts</button>
+            </div>
+
+            <div class="trust">
+                <div class="trust-icon">✓</div>
+                <div>
+                    <b>Verified Local Earners</b>
+                    <span>Over 5,000+ Mtaani residents paid this week</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Card -->
+        <div class="preview">
+            <div class="preview-head">
+                <span class="preview-title">Tasks Nearby</span>
+                <span class="preview-badge">Live</span>
+            </div>
+            
+            <div class="job-list">
+                <!-- Job Item 1 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>Survey: Local Shop</h3>
+                        <div class="job-meta">
+                            <span>⏱ 5 mins</span>
+                            <span>📍 0.2km away</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 100</div>
+                </div>
+
+                <!-- Job Item 2 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>App Test: Food Delivery</h3>
+                        <div class="job-meta">
+                            <span>⏱ 10 mins</span>
+                            <span>💻 Any Device</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 300</div>
+                </div>
+
+                <!-- Job Item 3 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>Photo Verification</h3>
+                        <div class="job-meta">
+                            <span>⏱ 2 mins</span>
+                            <span>📱 Mobile</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 75</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="section">
+    <div class="wrap">
+        <div class="section-header">
+            <div class="eyebrow"><span class="eyedot"></span> Easy Steps</div>
+            <h2>Your Community, Your Income</h2>
+            <p>We connect you with local businesses and digital tasks that pay real cash.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Sign Up Free</h3>
+                <p>Create your account in seconds. Receive an instant Sh 500 bonus to start your first job risk-free.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Accept Gigs</h3>
+                <p>Browse tasks available right now in your area or online. Accept one and start earning immediately.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Cash Out Fast</h3>
+                <p>Withdraw your earnings directly to M-Pesa. No waiting periods, no hidden deductions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section">
+    <div class="wrap">
+        <div class="cta-banner">
+            <h2>Start earning from your doorstep</h2>
+            <p>Join the largest network of local earners in your region.</p>
+            <button class="btn">Get Started Now</button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="wrap">
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+        <p>&copy; 2026 Kazi Mtaani Ltd. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>
