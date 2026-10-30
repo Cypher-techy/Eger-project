@@ -47,3 +47,7 @@ The account page clearly discloses a separate KES 50 payment before each withdra
 Balance is not held while the fee is pending, and the user may no longer have sufficient balance when submitting a request. Provide a documented fee refund and dispute procedure before use. If an STK request times out or the checkout ID is not saved, reconcile with Safaricom before retrying or marking it unsuccessful; the UI cannot approve a fee without a checkout ID. A public callback alone is not proof of payment. No refund of the KES 50 fee is automated, including after a rejected withdrawal.
 
 Neither the migration nor the live payment flow has been tested against a real Supabase project or Safaricom. Before handling money, validate the transaction and concurrency rules in staging and obtain security, legal and consumer-protection review.
+
+## Other applications in this repository
+
+The root URL serves KaziLeo. The previous KaziMtaaniJobs landing page from main is preserved at `/kazimtaani.html`, and the separate Next.js/Supabase prototype is in `kazi-connect/` with its own setup and migrations. These are independent prototypes, not an official Government of Kenya KaziMtaani programme. The root `ADMIN_EMAIL` setting alone does not provision an administrator; KaziLeo admin access is configured in its Supabase admin table as described above. Do not store admin passwords in source control.

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b48">
+<title>Kazi Mtaani — Local Jobs, Instant Cash</title>
+<meta name="description" content="Join Kazi Mtaani: Get paid for local tasks, surveys, and gigs in your neighborhood. Withdraw directly to M-Pesa instantly.">
+<style>
+:root{
+    --ink:#15261e;
+    --muted:#66756d;
+    --green:#176b48;
+    --green-dark:#105639;
+    --green-light:#e0edda;
+    --green-accent:#b7f36b;
+    --cream:#f6f8f2;
+    --line:#e3e9e1;
+    --white:#fff;
+    --amber:#fff3d5;
+    --shadow:0 18px 60px #102a1c12;
+    --card-shadow:0 28px 70px #24452c16;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none;transition:color .2s}
+button,input{font:inherit;border:none;background:none}
+.wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+
+/* Navigation */
+.nav{height:82px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:850;font-size:20px;letter-spacing:-.7px}
+.mark{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;background:var(--green);color:#fff;font-size:22px;font-weight:900}
+.brand em{font-style:normal;color:var(--green)}
+.brand small{display:block;font-size:9px;letter-spacing:2.4px;color:var(--muted);font-weight:800;line-height:1.2}
+.navlinks{display:flex;gap:27px;color:#526158;font-size:13px;font-weight:650}
+.navlinks a:hover{color:var(--green)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 19px;border:0;border-radius:12px;background:var(--green);color:#fff;font-weight:750;font-size:13px;cursor:pointer;box-shadow:0 8px 18px #176b4820;transition:transform .2s,background .2s}
+.btn:hover{background:var(--green-dark);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
+.btn-outline{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn-outline:hover{background:#f9fafb}
+
+/* Hero Section */
+.hero{position:relative;overflow:hidden;padding:66px 0 72px;background:radial-gradient(ellipse at 78% 22%,#d9efc6 0,transparent 35%),linear-gradient(130deg,#f8faf5,#edf4e8)}
+.hero:after{content:"";position:absolute;width:430px;height:430px;border:1px solid #c9ddc2;border-radius:50%;right:-100px;top:40px;box-shadow:0 0 0 35px #d8e8d42c,0 0 0 75px #d8e8d41b;pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:50px;align-items:center;position:relative;z-index:1}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}}
+
+/* Typography & Elements */
+.eyebrow{display:inline-flex;align-items:center;gap:9px;text-transform:uppercase;font-size:10px;letter-spacing:1.7px;font-weight:850;color:var(--green)}
+.eyedot{width:7px;height:7px;background:#78bd48;border-radius:50%;box-shadow:0 0 0 4px #78bd4822}
+.hero h1{font-size:clamp(42px,5.5vw,68px);line-height:1.02;letter-spacing:-3.5px;margin:18px 0 20px;max-width:620px;font-weight:850}
+.hero h1 span{color:var(--green)}
+.lead{font-size:17px;line-height:1.8;color:#58675e;max-width:540px;margin:0 0 27px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:flex;align-items:center;gap:13px;margin-top:31px;color:#647269;font-size:12px}
+.trust-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e0edda;color:var(--green);font-size:17px}
+.trust b{display:block;color:var(--ink);font-size:12px}
+
+/* Cards / Preview */
+.preview{background:#fff;border:1px solid #e5ece1;border-radius:25px;padding:24px;box-shadow:var(--card-shadow);position:relative}
+.preview-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:21px}
+.preview-title{font-weight:800;font-size:16px;color:var(--ink)}
+.preview-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--green-light);color:var(--green)}
+
+/* Job Card Styles */
+.job-list{display:flex;flex-direction:column;gap:16px}
+.job-card{display:flex;align-items:center;justify-content:space-between;padding:16px;border:1px solid var(--line);border-radius:16px;transition:all .2s;cursor:pointer}
+.job-card:hover{border-color:var(--green);background:var(--green-light)}
+.job-info h3{margin:0 0 4px;font-size:15px;font-weight:700}
+.job-meta{font-size:12px;color:var(--muted);display:flex;gap:12px}
+.job-pay{font-weight:800;color:var(--green);font-size:15px}
+
+/* Sections */
+.section{padding:80px 0}
+.section-header{text-align:center;max-width:600px;margin:0 auto 48px}
+.section-header h2{font-size:32px;font-weight:850;margin:0 0 12px;letter-spacing:-1px}
+.section-header p{margin:0;color:var(--muted)}
+
+/* Steps Grid */
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.step-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px;text-align:center;transition:transform .2s}
+.step-card:hover{transform:translateY(-5px);border-color:var(--green)}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--green);color:#fff;font-weight:800;display:grid;place-items:center;margin:0 auto 16px;font-size:18px}
+.step-card h3{margin:0 0 8px;font-size:18px}
+.step-card p{margin:0;color:var(--muted);font-size:14px}
+
+/* CTA Banner */
+.cta-banner{background:var(--green);color:#fff;border-radius:24px;padding:48px;text-align:center;position:relative;overflow:hidden}
+.cta-banner h2{margin:0 0 16px;font-size:28px}
+.cta-banner p{margin:0 0 24px;opacity:.9}
+.cta-banner .btn{background:#fff;color:var(--green);box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.cta-banner .btn:hover{background:var(--green-light);color:var(--green-dark)}
+
+/* Footer */
+.footer{padding:40px 0;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px}
+.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px}
+.footer-links a:hover{color:var(--green)}
+
+/* Mobile Adjustments */
+@media(max-width:600px){
+    .nav{height:auto;padding:16px 0;flex-direction:column;gap:16px}
+    .navlinks{gap:16px;flex-wrap:wrap;justify-content:center}
+    .hero{padding:40px 0}
+    .job-card{flex-direction:column;align-items:flex-start;gap:12px}
+    .job-pay{align-self:flex-end}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<header class="wrap nav">
+    <div class="brand">
+        <div class="mark">M</div>
+        <div>
+            <em>Kazi</em>Mtaani<small>LOCAL JOBS</small>
+        </div>
+    </div>
+    <nav class="navlinks">
+        <a href="#jobs">Nearby Tasks</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#reviews">Reviews</a>
+    </nav>
+    <button class="btn">Log In</button>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="wrap hero-grid">
+        <div class="hero-content">
+            <div class="eyebrow"><span class="eyedot"></span> Your Neighborhood</div>
+            <h1>Jobs around<br><span>your corner.</span><br>Paid to M-Pesa.</h1>
+            <p class="lead">Find simple gigs, surveys, and micro-tasks in your immediate area. No commute, no stress. Just tap, work, and get paid instantly to your phone.</p>
+            
+            <div class="hero-actions">
+                <button class="btn">Find Jobs Near Me</button>
+                <button class="btn btn-outline">See Recent Payouts</button>
+            </div>
+
+            <div class="trust">
+                <div class="trust-icon">✓</div>
+                <div>
+                    <b>Verified Local Earners</b>
+                    <span>Over 5,000+ Mtaani residents paid this week</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Card -->
+        <div class="preview">
+            <div class="preview-head">
+                <span class="preview-title">Tasks Nearby</span>
+                <span class="preview-badge">Live</span>
+            </div>
+            
+            <div class="job-list">
+                <!-- Job Item 1 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>Survey: Local Shop</h3>
+                        <div class="job-meta">
+                            <span>⏱ 5 mins</span>
+                            <span>📍 0.2km away</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 100</div>
+                </div>
+
+                <!-- Job Item 2 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>App Test: Food Delivery</h3>
+                        <div class="job-meta">
+                            <span>⏱ 10 mins</span>
+                            <span>💻 Any Device</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 300</div>
+                </div>
+
+                <!-- Job Item 3 -->
+                <div class="job-card">
+                    <div class="job-info">
+                        <h3>Photo Verification</h3>
+                        <div class="job-meta">
+                            <span>⏱ 2 mins</span>
+                            <span>📱 Mobile</span>
+                        </div>
+                    </div>
+                    <div class="job-pay">Sh 75</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how-it-works" class="section">
+    <div class="wrap">
+        <div class="section-header">
+            <div class="eyebrow"><span class="eyedot"></span> Easy Steps</div>
+            <h2>Your Community, Your Income</h2>
+            <p>We connect you with local businesses and digital tasks that pay real cash.</p>
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h3>Sign Up Free</h3>
+                <p>Create your account in seconds. Receive an instant Sh 500 bonus to start your first job risk-free.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h3>Accept Gigs</h3>
+                <p>Browse tasks available right now in your area or online. Accept one and start earning immediately.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h3>Cash Out Fast</h3>
+                <p>Withdraw your earnings directly to M-Pesa. No waiting periods, no hidden deductions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="section">
+    <div class="wrap">
+        <div class="cta-banner">
+            <h2>Start earning from your doorstep</h2>
+            <p>Join the largest network of local earners in your region.</p>
+            <button class="btn">Get Started Now</button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="wrap">
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Contact Support</a>
+        </div>
+        <p>&copy; 2026 Kazi Mtaani Ltd. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

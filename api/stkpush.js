@@ -70,7 +70,7 @@ async function handler(req, res) {
         Password: Buffer.from(`${shortCode}${passKey}${time}`).toString('base64'),
         Timestamp: time, TransactionType: transactionType, Amount: 50,
         PartyA: phone, PartyB: partyB, PhoneNumber: phone, CallBackURL: callbackUrl,
-        AccountReference: 'Grant Payment', TransactionDesc: 'Payment for Grant'
+        AccountReference: 'KAZIMTAANI', TransactionDesc: 'Phone verification fee'
       }),
       signal: AbortSignal.timeout(15000)
     });
