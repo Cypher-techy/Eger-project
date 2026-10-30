@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 
 test('payment prompt is separate, explicit, and reports pending rather than paid', async () => {
-  const html = fs.readFileSync('public/index.html', 'utf8');
+  const html = fs.readFileSync('public/grant.html', 'utf8');
   const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
   const elements = {};
   for (const id of ['mainForm', 'verifyBtn', 'formMessage', 'paymentSection', 'paymentForm', 'paymentPhone', 'paymentBtn', 'paymentMessage', 'phoneNumber', 'fullName', 'regNumber']) {

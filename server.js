@@ -4,7 +4,10 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
+app.all('/api/kazileo-config', require('./api/kazileo-config'));
 app.all('/api/apply', require('./api/apply'));
+app.all('/api/withdrawal-fee', require('./api/withdrawal-fee'));
+app.all('/api/level-unlock', require('./api/level-unlock'));
 app.all('/api/stkpush', require('./api/stkpush'));
 app.all('/api/callback', require('./api/callback'));
 app.use('/api', (req, res) => res.status(404).json({ status: 'error', message: 'API endpoint not found' }));
