@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Relief Fund | Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #006A3D; /* Egerton Green */
+            --secondary: #FFD700; /* Gold/Yellow for highlights */
+            --bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-light: #666;
+            --border: #e1e4e8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 106, 61, 0.2);
+        }
+
+        .header h2 {
+            margin: 10px 0 5px;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+
+        .status-bar {
+            background: #e6fffa;
+            color: #006A3D;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border: 1px solid #b2f5ea;
+        }
+
+        .timer {
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        /* Main Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .amount-box {
+            background: linear-gradient(135deg, #006A3D 0%, #004d2c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .amount-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .amount-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .disbursement-info {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 106, 61, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #004d2c;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* OTP Section (Hidden initially) */
+        .otp-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .otp-input {
+            letter-spacing: 5px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Progress Steps */
+        .steps-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .step-item.active { color: var(--text-main); }
+        .step-item.done { color: var(--primary); }
+
+        .step-icon {
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Social Proof Ticker */
+        .ticker-wrapper {
+            margin-top: 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            height: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ticker-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            border-bottom: 1px dashed #eee;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .ticker-row span:last-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 20px;
+        }
+
+        /* Loader */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <div class="logo">E</div>
+            <h2>Student Relief Fund</h2>
+        </div>
+
+        <div class="card">
+            <div class="disbursement-info">
+                <p>Submit your details for review. Submitting this form does not confirm approval or a payment.</p>
+            </div>
+
+            <!-- Initial Form -->
+            <form id="mainForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" placeholder="John Kamau Mwangi" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Registration Number</label>
+                    <!-- Regex: Letter + 2 Numbers / Numbers / Year -->
+                    <input type="text" id="regNumber" placeholder="e.g. A12/56789/20" pattern="[A-Za-z]\d{2}/\d+/\d{2}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>M-Pesa Phone Number</label>
+                    <input type="tel" id="phoneNumber" placeholder="0712 345 678" required maxlength="10">
+                </div>
+
+                <button type="submit" class="btn-primary" id="verifyBtn">
+                    <span id="btnText">Submit application</span>
+                    <div class="spinner" id="btnSpinner"></div>
+                </button>
+            </form>
+
+            <p id="formMessage" role="status" aria-live="polite"></p>
+            <section id="paymentSection" hidden aria-labelledby="paymentHeading">
+                <h3 id="paymentHeading">Optional M-Pesa payment</h3>
+                <p>Send a request to pay KES 50 from your M-Pesa account. This is a charge, not a grant disbursement. Submitting an application does not require this payment.</p>
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="paymentPhone">M-Pesa phone number to charge</label>
+                        <input type="tel" id="paymentPhone" autocomplete="tel" required>
+                    </div>
+                    <button type="submit" class="btn-primary" id="paymentBtn">Request KES 50 M-Pesa payment</button>
+                </form>
+                <p id="paymentMessage" role="status" aria-live="polite"></p>
+            </section>
+        </div>
+        <div class="footer"><p>Student Relief Fund application</p></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('mainForm');
+        const button = document.getElementById('verifyBtn');
+        const message = document.getElementById('formMessage');
+        const paymentSection = document.getElementById('paymentSection');
+        const paymentForm = document.getElementById('paymentForm');
+        const paymentPhone = document.getElementById('paymentPhone');
+        const paymentButton = document.getElementById('paymentBtn');
+        const paymentMessage = document.getElementById('paymentMessage');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            button.disabled = true;
+            message.textContent = 'Submitting application…';
+            const submittedPhone = document.getElementById('phoneNumber').value;
+            try {
+                const response = await fetch('/api/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName: document.getElementById('fullName').value,
+                        regNumber: document.getElementById('regNumber').value,
+                        phone: document.getElementById('phoneNumber').value
+                    })
+                });
+                let data;
+                try { data = await response.json(); } catch (_) { data = {}; }
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error(data.message || `Application request failed (HTTP ${response.status}).`);
+                }
+                message.textContent = data.message || 'Application submitted for review.';
+                form.reset();
+                paymentPhone.value = submittedPhone;
+                paymentSection.hidden = false;
+                paymentButton.disabled = false;
+                paymentMessage.textContent = '';
+            } catch (error) {
+                message.textContent = error.message || 'Connection issue. Please try again.';
+            } finally {
+                button.disabled = false;
+            }
+        });
+        paymentForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            paymentButton.disabled = true;
+            paymentMessage.textContent = 'Requesting an M-Pesa prompt…';
+            try {
+                const response = await fetch('/api/stkpush', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: paymentPhone.value })
+                });
+                let data;
+                try { data = await response.json(); } catch (_) { data = {}; }
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error(data.message || `Payment request failed (HTTP ${response.status}).`);
+                }
+                paymentMessage.textContent = 'Payment prompt accepted. Check your phone; payment is not yet confirmed. Reference: ' + data.checkoutRequestId;
+            } catch (error) {
+                paymentMessage.textContent = (error.message || 'Connection issue.') + ' Check your phone before trying again; a prompt may still arrive.';
+                paymentButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
