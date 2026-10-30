@@ -1,6 +1,6 @@
 # KaziLeo and existing M-Pesa integration
 
-The home page links to the KaziLeo account platform. Activities, account access, admin review and manual withdrawals require Supabase configuration and staging validation as described below. The original application/payment form remains available at `/grant.html`; its API routes and STK integration are unchanged.
+The home page links to the KaziLeo account platform. Activities, account access, admin review and manual withdrawals require Supabase configuration and staging validation as described below. The grant entry page at `/grant.html` directs applicants to the authenticated account form; the original application and STK API routes remain available and unchanged.
 
 Run `npm install`, copy `.env.example` to `.env`, fill in the Daraja and Supabase credentials, and run `npm start`. Set `MPESA_ENVIRONMENT` to `sandbox` or `production` and use matching `MPESA_CONSUMER_KEY`, `MPESA_CONSUMER_SECRET`, `MPESA_SHORTCODE` and `MPESA_PASSKEY`. Set `MPESA_ENABLED=false` to disable STK requests (`true` by default). Set `MPESA_TRANSACTION_TYPE` to `CustomerPayBillOnline` (default) or `CustomerBuyGoodsOnline`. For Buy Goods, set `MPESA_PARTY_B` to the till/Party B registered with Safaricom; for PayBill it defaults to the shortcode. Verify the correct shortcode, Party B and passkey for your Daraja registration with Safaricom. The legacy `DARAJA_ENVIRONMENT`, `DARAJA_CONSUMER_KEY`, `DARAJA_CONSUMER_SECRET`, `DARAJA_SHORTCODE` and `DARAJA_PASSKEY` remain supported when their corresponding `MPESA_*` variables are absent; `MPESA_*` takes precedence. Apply `supabase/schema.sql` in Supabase. Keep the service role key on the server only.
 
@@ -10,7 +10,7 @@ POST JSON `{ "phone": "0712345678" }` to `/api/stkpush`. Kenyan numbers in `07..
 
 Callbacks are publicly reachable and are not authenticated by this implementation. Do not use a callback alone as proof of payment or grant access based on it; verify the transaction independently with Safaricom before fulfilling an order. Protect and monitor the endpoint at the deployment layer.
 
-The application form POSTs `fullName`, `regNumber` and `phone` to `/api/apply`. The server saves submissions to the `applications` table using the Supabase service role key; a successful submission is pending review, not approval or payment. After submission, the form offers a separate optional KES 50 payment button. It sends an STK push only when clicked; an accepted prompt is not confirmation of payment. The form does not verify an OTP. Deploy the Node server (or configure equivalent serverless routing) so `/api/apply` reaches the backend; a static-only deployment cannot serve this endpoint.
+The legacy `/api/apply` endpoint stores applications for review, but the current grant page instead uses the account-linked grant workflow below. Neither form verifies a phone number or sends an STK prompt automatically. Deploy the Node server (or configure equivalent serverless routing); a static-only deployment cannot serve its API endpoints.
 
 Run `npm test` for automated tests.
 
@@ -51,3 +51,9 @@ Neither the migration nor the live payment flow has been tested against a real S
 ## Other applications in this repository
 
 The root URL serves KaziLeo. The previous KaziMtaaniJobs landing page from main is preserved at `/kazimtaani.html`, and the separate Next.js/Supabase prototype is in `kazi-connect/` with its own setup and migrations. These are independent prototypes, not an official Government of Kenya KaziMtaani programme. The root `ADMIN_EMAIL` setting alone does not provision an administrator; KaziLeo admin access is configured in its Supabase admin table as described above. Do not store admin passwords in source control.
+
+## Admin-approved grants
+
+After the existing KaziLeo ledger, minimum, level-two and withdrawal-fee migrations, apply `supabase/migrations/20261101_approved_grants.sql` in staging. `/grant.html` directs applicants to the authenticated account form. A form submission does not create a grant or trigger a payment: an admin must review the pending application, verify that the grant is genuine and funded, and record an approved whole-shilling amount. Approval credits the user's wallet exactly once. The applicant can submit the form again with the same registration number and phone to check the account-linked award; if the award remains available, the page pre-fills the separately disclosed KES 50 withdrawal-fee flow, which still requires the applicant's explicit consent and independent admin payment verification. A withdrawal marks an outstanding award unavailable for checking; rejecting and refunding that withdrawal makes it eligible for checking again. Current accounting treats any withdrawal as using the oldest outstanding grant and allows one active grant application per account.
+
+The migration changes ledger constraints and withdrawal functions and has **not been tested against a live database**. Back up data and test migration order, permissions, concurrent approvals/withdrawals, payment verification, refunds, and reconciliation in staging. An approval entry is only an administrator attestation; it is not proof of external funding. Existing users with an unresolved fee tied to different details must contact support rather than pay again.

@@ -17,7 +17,7 @@ async function request(path, options = {}) {
   return data;
 }
 function showAuth() { $('auth-view').hidden = false; $('user-view').hidden = true; $('admin-view').hidden = true; }
-function showUser() { $('auth-view').hidden = true; $('user-view').hidden = false; $('account-email').textContent = user.email || ''; }
+function showUser() { $('auth-view').hidden = true; $('user-view').hidden = false; $('account-email').textContent = user.email || ''; if (location.hash === '#grant') $('grant').scrollIntoView({ block: 'start' }); }
 function button(text, fn) { const b = node('button', text, 'secondary'); b.type = 'button'; b.addEventListener('click', async () => { b.disabled = true; message(''); try { await fn(); } catch (error) { message(error.message); } finally { b.disabled = false; } }); return b; }
 function rpc(name, args = {}) { return request('/rest/v1/rpc/' + name, { method: 'POST', body: JSON.stringify(args) }); }
 function empty(container, text) { if (!container.children.length) container.append(node('p', text)); }
@@ -61,12 +61,30 @@ async function refresh() {
   if (admin) await refreshAdmin();
 }
 async function refreshAdmin() {
-  const [pending, withdrawals, unlocks, fees] = await Promise.all([
+  const [pending, withdrawals, unlocks, fees, grantApplications] = await Promise.all([
     request('/rest/v1/kazileo_submissions?select=id,user_id,activity_id,answer,created_at&status=eq.pending&order=created_at.asc'),
     request('/rest/v1/kazileo_withdrawals?select=id,user_id,phone,amount_kes,status,receipt&order=created_at.desc'),
     request('/rest/v1/kazileo_level_two_payments?select=id,user_id,phone,amount_kes,status,checkout_request_id,created_at&status=in.(initiating,pending)&order=created_at.asc'),
-    request('/rest/v1/kazileo_withdrawal_fees?select=id,user_id,phone,amount_kes,withdrawal_amount_kes,status,checkout_request_id,created_at&status=in.(initiating,pending)&order=created_at.asc')
+    request('/rest/v1/kazileo_withdrawal_fees?select=id,user_id,phone,amount_kes,withdrawal_amount_kes,status,checkout_request_id,created_at&status=in.(initiating,pending)&order=created_at.asc'),
+    request('/rest/v1/kazileo_grant_applications?select=id,user_id,full_name,reg_number,phone,created_at&status=eq.pending&order=created_at.asc')
   ]);
+  const grantList = $('admin-grant-applications'); grantList.replaceChildren();
+  grantApplications.forEach(application => {
+    const row = node('div', null, 'platform-item');
+    row.append(node('strong', application.full_name), node('small', `Account ${application.user_id} · Registration ${application.reg_number} · Phone ${application.phone}`));
+    row.append(button('Approve funded grant', async () => {
+      const value = prompt('Enter the approved, funded grant amount in KES (minimum 1,200):');
+      if (value === null) return;
+      const amount = Number(value);
+      if (!Number.isSafeInteger(amount) || amount < 1200 || amount > 10000000) throw new Error('Enter a valid whole-shilling grant amount.');
+      if (!confirm(`Confirm that this applicant is approved and KES ${amount} is funded and available?`)) return;
+      await rpc('kazileo_review_grant_application', { p_id: application.id, p_approve: true, p_amount: amount }); await refresh();
+    }), button('Reject application', async () => {
+      if (!confirm('Reject this grant application?')) return;
+      await rpc('kazileo_review_grant_application', { p_id: application.id, p_approve: false, p_amount: null }); await refresh();
+    }));
+    grantList.append(row);
+  }); empty(grantList, 'No pending grant applications.');
   const unlockList = $('admin-unlocks'); unlockList.replaceChildren();
   unlocks.forEach(payment => {
     const row = node('div', null, 'platform-item');
@@ -116,6 +134,23 @@ async function refreshAdmin() {
 $('auth-form').addEventListener('submit', async e => { e.preventDefault(); message(''); try { const result = await request('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }) }); storeToken(result.access_token); user = result.user; $('password').value = ''; showUser(); await refresh(); } catch (error) { message(error.message); } });
 $('signup').addEventListener('click', async () => { message(''); if (!$('auth-form').reportValidity()) return; try { const result = await request('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }) }); $('password').value = ''; if (result.access_token && result.user) { storeToken(result.access_token); user = result.user; showUser(); await refresh(); } else message('Check your email to confirm your account, then sign in.'); } catch (error) { message(error.message); } });
 $('logout').addEventListener('click', async () => { try { await request('/auth/v1/logout', { method: 'POST' }); } catch (_) { /* clear local session even if server is unreachable */ } storeToken(null); user = null; showAuth(); message('Signed out.'); });
+$('grant-form').addEventListener('submit', async e => {
+  e.preventDefault(); const submit = e.target.querySelector('button'); submit.disabled = true; message('');
+  $('grant-status').textContent = 'Checking your application…';
+  try {
+    const phone = $('grant-phone').value.trim();
+    const result = await rpc('kazileo_submit_grant_application', { p_full_name: $('grant-name').value.trim(), p_reg_number: $('grant-reg').value.trim(), p_phone: phone });
+    if (result.status !== 'approved') { $('grant-status').textContent = 'Application submitted for administrator review. No grant has been approved and no fee is due.'; return; }
+    await refresh();
+    if (activeWithdrawalFee && (activeWithdrawalFee.phone !== phone || Number(activeWithdrawalFee.withdrawal_amount_kes) !== Number(result.amount_kes))) {
+      $('grant-status').textContent = 'An approved grant is available, but an existing withdrawal fee is linked to different details. Contact support before paying again.'; return;
+    }
+    $('amount').value = result.amount_kes; $('phone').value = phone;
+    $('grant-status').textContent = `An administrator approved a KES ${result.amount_kes} grant for this account. Review the separate KES 50 withdrawal fee below; payment is not automatic and does not guarantee payout.`;
+    $('withdraw-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch (error) { $('grant-status').textContent = error.message || 'Unable to check your application.'; }
+  finally { submit.disabled = false; }
+});
 $('unlock-form').addEventListener('submit', async e => {
   e.preventDefault();
   if (!confirm('Request an STK prompt to pay KES 20 for a global level-two unlock?')) return;
