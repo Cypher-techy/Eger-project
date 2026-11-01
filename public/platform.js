@@ -22,15 +22,17 @@ function button(text, fn) { const b = node('button', text, 'secondary'); b.type 
 function rpc(name, args = {}) { return request('/rest/v1/rpc/' + name, { method: 'POST', body: JSON.stringify(args) }); }
 function empty(container, text) { if (!container.children.length) container.append(node('p', text)); }
 async function refresh() {
-  const [wallets, activities, submissions, withdrawals, payments, withdrawalFees, admin] = await Promise.all([
+  const [wallets, activities, submissions, withdrawals, payments, withdrawalFees, admin, referralCode] = await Promise.all([
     request('/rest/v1/kazileo_wallets?select=available_kes&user_id=eq.' + encodeURIComponent(user.id)),
     request('/rest/v1/kazileo_activities?select=id,title,instructions,level&active=eq.true&order=created_at.desc'),
     request('/rest/v1/kazileo_submissions?select=id,activity_id,status,created_at&user_id=eq.' + encodeURIComponent(user.id) + '&order=created_at.desc'),
     request('/rest/v1/kazileo_withdrawals?select=id,amount_kes,status,receipt,created_at&user_id=eq.' + encodeURIComponent(user.id) + '&order=created_at.desc'),
     request('/rest/v1/kazileo_level_two_payments?select=id,status,checkout_request_id,created_at&user_id=eq.' + encodeURIComponent(user.id) + '&order=created_at.desc'),
     request('/rest/v1/kazileo_withdrawal_fees?select=id,status,phone,withdrawal_amount_kes,checkout_request_id,created_at&user_id=eq.' + encodeURIComponent(user.id) + '&order=created_at.desc'),
-    rpc('kazileo_is_admin')
+    rpc('kazileo_is_admin'),
+    rpc('kazileo_my_referral_code')
   ]);
+  const referralUrl = new URL('/platform.html', location.origin); referralUrl.searchParams.set('ref', referralCode); $('referral-link').value = referralUrl.href;
   const activePayment = payments.find(p => ['initiating', 'pending', 'unlocked'].includes(p.status));
   $('unlock-form').hidden = !!activePayment;
   $('unlock-status').textContent = activePayment ? (activePayment.status === 'unlocked' ? 'Level two is unlocked for all activities.' : 'Payment is awaiting administrator verification. Do not pay again. ' + (activePayment.checkout_request_id ? 'Checkout ID: ' + activePayment.checkout_request_id : 'Contact support to review the payment status.')) : 'Level two is locked. A request will charge KES 20 if you approve it on your phone.';
@@ -61,13 +63,24 @@ async function refresh() {
   if (admin) await refreshAdmin();
 }
 async function refreshAdmin() {
-  const [pending, withdrawals, unlocks, fees, grantApplications] = await Promise.all([
+  const [pending, withdrawals, unlocks, fees, grantApplications, managedActivities] = await Promise.all([
     request('/rest/v1/kazileo_submissions?select=id,user_id,activity_id,answer,created_at&status=eq.pending&order=created_at.asc'),
     request('/rest/v1/kazileo_withdrawals?select=id,user_id,phone,amount_kes,status,receipt&order=created_at.desc'),
     request('/rest/v1/kazileo_level_two_payments?select=id,user_id,phone,amount_kes,status,checkout_request_id,created_at&status=in.(initiating,pending)&order=created_at.asc'),
     request('/rest/v1/kazileo_withdrawal_fees?select=id,user_id,phone,amount_kes,withdrawal_amount_kes,status,checkout_request_id,created_at&status=in.(initiating,pending)&order=created_at.asc'),
-    request('/rest/v1/kazileo_grant_applications?select=id,user_id,full_name,reg_number,phone,created_at&status=eq.pending&order=created_at.asc')
+    request('/rest/v1/kazileo_grant_applications?select=id,user_id,full_name,reg_number,phone,created_at&status=eq.pending&order=created_at.asc'),
+    request('/rest/v1/kazileo_activities?select=id,title,instructions,level,active&order=created_at.desc')
   ]);
+  const managedList = $('admin-activities'); managedList.replaceChildren();
+  managedActivities.forEach(activity => {
+    const row = node('div', null, 'platform-item');
+    row.append(node('strong', activity.title), node('small', `Level ${activity.level} · ${activity.active ? 'Published' : 'Draft / inactive'}`), node('p', activity.instructions));
+    row.append(button(activity.active ? 'Unpublish' : 'Publish', async () => {
+      if (!confirm(activity.active ? 'Unpublish this activity? Existing submissions remain available for review.' : 'Publish this activity? Approved submissions credit KES 100 each.')) return;
+      await rpc('kazileo_set_activity_active', { p_id: activity.id, p_active: !activity.active }); await refresh();
+    }));
+    managedList.append(row);
+  }); empty(managedList, 'No activities created yet.');
   const grantList = $('admin-grant-applications'); grantList.replaceChildren();
   grantApplications.forEach(application => {
     const row = node('div', null, 'platform-item');
@@ -131,8 +144,15 @@ async function refreshAdmin() {
     list.append(row);
   }); empty(list, 'No withdrawals.');
 }
+$('admin-activity-form').addEventListener('submit', async e => {
+  e.preventDefault(); const submit = e.target.querySelector('button'); submit.disabled = true; message('');
+  try {
+    await rpc('kazileo_create_activity', { p_title: $('activity-title').value.trim(), p_instructions: $('activity-instructions').value.trim(), p_level: Number($('activity-level').value) });
+    e.target.reset(); await refresh(); message('Activity draft created. Publish it when it is ready.');
+  } catch (error) { message(error.message); } finally { submit.disabled = false; }
+});
 $('auth-form').addEventListener('submit', async e => { e.preventDefault(); message(''); try { const result = await request('/auth/v1/token?grant_type=password', { method: 'POST', body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }) }); storeToken(result.access_token); user = result.user; $('password').value = ''; showUser(); await refresh(); } catch (error) { message(error.message); } });
-$('signup').addEventListener('click', async () => { message(''); if (!$('auth-form').reportValidity()) return; try { const result = await request('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value }) }); $('password').value = ''; if (result.access_token && result.user) { storeToken(result.access_token); user = result.user; showUser(); await refresh(); } else message('Check your email to confirm your account, then sign in.'); } catch (error) { message(error.message); } });
+$('signup').addEventListener('click', async () => { message(''); if (!$('auth-form').reportValidity()) return; try { const result = await request('/auth/v1/signup', { method: 'POST', body: JSON.stringify({ email: $('email').value.trim(), password: $('password').value, data: { kazileo_referral_code: $('referral-code').value.trim() } }) }); $('password').value = ''; if (result.access_token && result.user) { storeToken(result.access_token); user = result.user; showUser(); await refresh(); } else message('Check your email to confirm your account, then sign in.'); } catch (error) { message(error.message); } });
 $('logout').addEventListener('click', async () => { try { await request('/auth/v1/logout', { method: 'POST' }); } catch (_) { /* clear local session even if server is unreachable */ } storeToken(null); user = null; showAuth(); message('Signed out.'); });
 $('grant-form').addEventListener('submit', async e => {
   e.preventDefault(); const submit = e.target.querySelector('button'); submit.disabled = true; message('');
@@ -179,4 +199,5 @@ $('withdraw-form').addEventListener('submit', async e => {
   } catch (error) { message(error.message); try { await refresh(); } catch (_) {} }
   finally { submit.disabled = !!(activeWithdrawalFee && activeWithdrawalFee.status !== 'verified'); }
 });
+$('referral-code').value = new URLSearchParams(location.search).get('ref') || '';
 (async function init() { try { const res = await fetch('/api/kazileo-config'); const data = await res.json(); if (!res.ok) throw new Error(data.message || 'Configuration unavailable.'); config = data; token = sessionToken(); if (token) { user = await request('/auth/v1/user'); showUser(); await refresh(); } } catch (err) { message(err.message); } })();
